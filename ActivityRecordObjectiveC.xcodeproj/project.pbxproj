@@ -1,0 +1,487 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		3B0D6DEF789349DBB235E73D /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2A4857B1F0144A94BBF2CD5D /* libPods.a */; };
+		E509748C1945A9C20043B05C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E509748B1945A9C20043B05C /* Foundation.framework */; };
+		E509748E1945A9C20043B05C /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E509748D1945A9C20043B05C /* CoreGraphics.framework */; };
+		E50974901945A9C20043B05C /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E509748F1945A9C20043B05C /* UIKit.framework */; };
+		E50974921945A9C20043B05C /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E50974911945A9C20043B05C /* CoreData.framework */; };
+		E53BE27F1945B5E800BB91F1 /* ActivityRecordObjectiveC.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = E53BE25D1945B5E800BB91F1 /* ActivityRecordObjectiveC.xcdatamodeld */; };
+		E53BE2801945B5E800BB91F1 /* PHNetworkManager.m in Sources */ = {isa = PBXBuildFile; fileRef = E53BE2631945B5E800BB91F1 /* PHNetworkManager.m */; };
+		E53BE2811945B5E800BB91F1 /* PHNetworkOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = E53BE2651945B5E800BB91F1 /* PHNetworkOperation.m */; };
+		E53BE2821945B5E800BB91F1 /* PHNetworkRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = E53BE2671945B5E800BB91F1 /* PHNetworkRequest.m */; };
+		E53BE2841945B5E800BB91F1 /* PHGraphObject.m in Sources */ = {isa = PBXBuildFile; fileRef = E53BE26D1945B5E800BB91F1 /* PHGraphObject.m */; };
+		E53BE2851945B5E800BB91F1 /* PHPhoenix.m in Sources */ = {isa = PBXBuildFile; fileRef = E53BE2701945B5E800BB91F1 /* PHPhoenix.m */; };
+		E53BE2861945B5E800BB91F1 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E53BE2721945B5E800BB91F1 /* Images.xcassets */; };
+		E53BE2871945B5E800BB91F1 /* ACAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = E53BE2751945B5E800BB91F1 /* ACAppDelegate.m */; };
+		E53BE2891945B5E800BB91F1 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = E53BE2781945B5E800BB91F1 /* InfoPlist.strings */; };
+		E53BE28A1945B5E800BB91F1 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = E53BE27A1945B5E800BB91F1 /* main.m */; };
+		E53BE28B1945B5E800BB91F1 /* PHClassTypeConvertor.m in Sources */ = {isa = PBXBuildFile; fileRef = E53BE27D1945B5E800BB91F1 /* PHClassTypeConvertor.m */; };
+		E53BE28F1945DFAD00BB91F1 /* PHInfoRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = E53BE28E1945DFAD00BB91F1 /* PHInfoRequest.m */; };
+		E53BE2931945EF4E00BB91F1 /* ACRequestSerializer.m in Sources */ = {isa = PBXBuildFile; fileRef = E53BE2921945EF4E00BB91F1 /* ACRequestSerializer.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		25FEF343553D4AAD9E2405F1 /* Pods.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.xcconfig; path = Pods/Pods.xcconfig; sourceTree = "<group>"; };
+		2A4857B1F0144A94BBF2CD5D /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		E50974881945A9C20043B05C /* ActivityRecordObjectiveC.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ActivityRecordObjectiveC.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E509748B1945A9C20043B05C /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		E509748D1945A9C20043B05C /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		E509748F1945A9C20043B05C /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		E50974911945A9C20043B05C /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		E50974A91945A9C20043B05C /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
+		E53BE25E1945B5E800BB91F1 /* ActivityRecordObjectiveC.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ActivityRecordObjectiveC.xcdatamodel; sourceTree = "<group>"; };
+		E53BE2621945B5E800BB91F1 /* PHNetworkManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PHNetworkManager.h; sourceTree = "<group>"; };
+		E53BE2631945B5E800BB91F1 /* PHNetworkManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PHNetworkManager.m; sourceTree = "<group>"; };
+		E53BE2641945B5E800BB91F1 /* PHNetworkOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PHNetworkOperation.h; sourceTree = "<group>"; };
+		E53BE2651945B5E800BB91F1 /* PHNetworkOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PHNetworkOperation.m; sourceTree = "<group>"; };
+		E53BE2661945B5E800BB91F1 /* PHNetworkRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PHNetworkRequest.h; sourceTree = "<group>"; };
+		E53BE2671945B5E800BB91F1 /* PHNetworkRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PHNetworkRequest.m; sourceTree = "<group>"; };
+		E53BE26B1945B5E800BB91F1 /* LoggingDefs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoggingDefs.h; sourceTree = "<group>"; };
+		E53BE26C1945B5E800BB91F1 /* PHGraphObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PHGraphObject.h; sourceTree = "<group>"; };
+		E53BE26D1945B5E800BB91F1 /* PHGraphObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PHGraphObject.m; sourceTree = "<group>"; };
+		E53BE26F1945B5E800BB91F1 /* PHPhoenix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PHPhoenix.h; sourceTree = "<group>"; };
+		E53BE2701945B5E800BB91F1 /* PHPhoenix.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PHPhoenix.m; sourceTree = "<group>"; };
+		E53BE2721945B5E800BB91F1 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		E53BE2741945B5E800BB91F1 /* ACAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACAppDelegate.h; sourceTree = "<group>"; };
+		E53BE2751945B5E800BB91F1 /* ACAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACAppDelegate.m; sourceTree = "<group>"; };
+		E53BE2761945B5E800BB91F1 /* ActivityRecordObjectiveC-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "ActivityRecordObjectiveC-Info.plist"; sourceTree = "<group>"; };
+		E53BE2771945B5E800BB91F1 /* ActivityRecordObjectiveC-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ActivityRecordObjectiveC-Prefix.pch"; sourceTree = "<group>"; };
+		E53BE2791945B5E800BB91F1 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		E53BE27A1945B5E800BB91F1 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		E53BE27C1945B5E800BB91F1 /* PHClassTypeConvertor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PHClassTypeConvertor.h; sourceTree = "<group>"; };
+		E53BE27D1945B5E800BB91F1 /* PHClassTypeConvertor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PHClassTypeConvertor.m; sourceTree = "<group>"; };
+		E53BE28D1945DFAD00BB91F1 /* PHInfoRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PHInfoRequest.h; path = Test/PHInfoRequest.h; sourceTree = "<group>"; };
+		E53BE28E1945DFAD00BB91F1 /* PHInfoRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PHInfoRequest.m; path = Test/PHInfoRequest.m; sourceTree = "<group>"; };
+		E53BE2911945EF4E00BB91F1 /* ACRequestSerializer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACRequestSerializer.h; sourceTree = "<group>"; };
+		E53BE2921945EF4E00BB91F1 /* ACRequestSerializer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACRequestSerializer.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		E50974851945A9C20043B05C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E509748E1945A9C20043B05C /* CoreGraphics.framework in Frameworks */,
+				E50974921945A9C20043B05C /* CoreData.framework in Frameworks */,
+				E50974901945A9C20043B05C /* UIKit.framework in Frameworks */,
+				E509748C1945A9C20043B05C /* Foundation.framework in Frameworks */,
+				3B0D6DEF789349DBB235E73D /* libPods.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		E509747F1945A9C20043B05C = {
+			isa = PBXGroup;
+			children = (
+				E50974931945A9C20043B05C /* ActivityRecordObjectiveC */,
+				E509748A1945A9C20043B05C /* Frameworks */,
+				E50974891945A9C20043B05C /* Products */,
+				25FEF343553D4AAD9E2405F1 /* Pods.xcconfig */,
+			);
+			sourceTree = "<group>";
+		};
+		E50974891945A9C20043B05C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				E50974881945A9C20043B05C /* ActivityRecordObjectiveC.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		E509748A1945A9C20043B05C /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				E509748B1945A9C20043B05C /* Foundation.framework */,
+				E509748D1945A9C20043B05C /* CoreGraphics.framework */,
+				E509748F1945A9C20043B05C /* UIKit.framework */,
+				E50974911945A9C20043B05C /* CoreData.framework */,
+				E50974A91945A9C20043B05C /* XCTest.framework */,
+				2A4857B1F0144A94BBF2CD5D /* libPods.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		E50974931945A9C20043B05C /* ActivityRecordObjectiveC */ = {
+			isa = PBXGroup;
+			children = (
+				E53BE28C1945DF7300BB91F1 /* Test */,
+				E53BE25B1945B5E800BB91F1 /* Category */,
+				E53BE25C1945B5E800BB91F1 /* CoreData Layer */,
+				E53BE25F1945B5E800BB91F1 /* Interface Layer */,
+				E53BE2601945B5E800BB91F1 /* Network layer */,
+				E53BE2711945B5E800BB91F1 /* Resources */,
+				E53BE2731945B5E800BB91F1 /* Supporting Files */,
+				E53BE27B1945B5E800BB91F1 /* Utility */,
+				E53BE27E1945B5E800BB91F1 /* Vendor */,
+			);
+			path = ActivityRecordObjectiveC;
+			sourceTree = "<group>";
+		};
+		E53BE25B1945B5E800BB91F1 /* Category */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Category;
+			sourceTree = "<group>";
+		};
+		E53BE25C1945B5E800BB91F1 /* CoreData Layer */ = {
+			isa = PBXGroup;
+			children = (
+				E53BE25D1945B5E800BB91F1 /* ActivityRecordObjectiveC.xcdatamodeld */,
+			);
+			path = "CoreData Layer";
+			sourceTree = "<group>";
+		};
+		E53BE25F1945B5E800BB91F1 /* Interface Layer */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = "Interface Layer";
+			sourceTree = "<group>";
+		};
+		E53BE2601945B5E800BB91F1 /* Network layer */ = {
+			isa = PBXGroup;
+			children = (
+				E53BE2611945B5E800BB91F1 /* Client */,
+				E53BE26B1945B5E800BB91F1 /* LoggingDefs.h */,
+				E53BE26C1945B5E800BB91F1 /* PHGraphObject.h */,
+				E53BE26D1945B5E800BB91F1 /* PHGraphObject.m */,
+				E53BE26F1945B5E800BB91F1 /* PHPhoenix.h */,
+				E53BE2701945B5E800BB91F1 /* PHPhoenix.m */,
+			);
+			path = "Network layer";
+			sourceTree = "<group>";
+		};
+		E53BE2611945B5E800BB91F1 /* Client */ = {
+			isa = PBXGroup;
+			children = (
+				E53BE2621945B5E800BB91F1 /* PHNetworkManager.h */,
+				E53BE2631945B5E800BB91F1 /* PHNetworkManager.m */,
+				E53BE2641945B5E800BB91F1 /* PHNetworkOperation.h */,
+				E53BE2651945B5E800BB91F1 /* PHNetworkOperation.m */,
+				E53BE2661945B5E800BB91F1 /* PHNetworkRequest.h */,
+				E53BE2671945B5E800BB91F1 /* PHNetworkRequest.m */,
+				E53BE2911945EF4E00BB91F1 /* ACRequestSerializer.h */,
+				E53BE2921945EF4E00BB91F1 /* ACRequestSerializer.m */,
+			);
+			path = Client;
+			sourceTree = "<group>";
+		};
+		E53BE2711945B5E800BB91F1 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				E53BE2721945B5E800BB91F1 /* Images.xcassets */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		E53BE2731945B5E800BB91F1 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				E53BE2741945B5E800BB91F1 /* ACAppDelegate.h */,
+				E53BE2751945B5E800BB91F1 /* ACAppDelegate.m */,
+				E53BE2761945B5E800BB91F1 /* ActivityRecordObjectiveC-Info.plist */,
+				E53BE2771945B5E800BB91F1 /* ActivityRecordObjectiveC-Prefix.pch */,
+				E53BE2781945B5E800BB91F1 /* InfoPlist.strings */,
+				E53BE27A1945B5E800BB91F1 /* main.m */,
+			);
+			path = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		E53BE27B1945B5E800BB91F1 /* Utility */ = {
+			isa = PBXGroup;
+			children = (
+				E53BE27C1945B5E800BB91F1 /* PHClassTypeConvertor.h */,
+				E53BE27D1945B5E800BB91F1 /* PHClassTypeConvertor.m */,
+			);
+			path = Utility;
+			sourceTree = "<group>";
+		};
+		E53BE27E1945B5E800BB91F1 /* Vendor */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Vendor;
+			sourceTree = "<group>";
+		};
+		E53BE28C1945DF7300BB91F1 /* Test */ = {
+			isa = PBXGroup;
+			children = (
+				E53BE28D1945DFAD00BB91F1 /* PHInfoRequest.h */,
+				E53BE28E1945DFAD00BB91F1 /* PHInfoRequest.m */,
+			);
+			name = Test;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		E50974871945A9C20043B05C /* ActivityRecordObjectiveC */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E50974BA1945A9C20043B05C /* Build configuration list for PBXNativeTarget "ActivityRecordObjectiveC" */;
+			buildPhases = (
+				C009430B4F5E4AE3B993E18C /* Check Pods Manifest.lock */,
+				E50974841945A9C20043B05C /* Sources */,
+				E50974851945A9C20043B05C /* Frameworks */,
+				E50974861945A9C20043B05C /* Resources */,
+				BE6D1F48E912436C8EB0348C /* Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ActivityRecordObjectiveC;
+			productName = ActivityRecordObjectiveC;
+			productReference = E50974881945A9C20043B05C /* ActivityRecordObjectiveC.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		E50974801945A9C20043B05C /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				CLASSPREFIX = AC;
+				LastUpgradeCheck = 0510;
+				ORGANIZATIONNAME = "Iegor Borodai";
+			};
+			buildConfigurationList = E50974831945A9C20043B05C /* Build configuration list for PBXProject "ActivityRecordObjectiveC" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = E509747F1945A9C20043B05C;
+			productRefGroup = E50974891945A9C20043B05C /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				E50974871945A9C20043B05C /* ActivityRecordObjectiveC */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		E50974861945A9C20043B05C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E53BE2891945B5E800BB91F1 /* InfoPlist.strings in Resources */,
+				E53BE2861945B5E800BB91F1 /* Images.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		BE6D1F48E912436C8EB0348C /* Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Pods-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		C009430B4F5E4AE3B993E18C /* Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		E50974841945A9C20043B05C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E53BE2801945B5E800BB91F1 /* PHNetworkManager.m in Sources */,
+				E53BE2851945B5E800BB91F1 /* PHPhoenix.m in Sources */,
+				E53BE28F1945DFAD00BB91F1 /* PHInfoRequest.m in Sources */,
+				E53BE2931945EF4E00BB91F1 /* ACRequestSerializer.m in Sources */,
+				E53BE2811945B5E800BB91F1 /* PHNetworkOperation.m in Sources */,
+				E53BE2841945B5E800BB91F1 /* PHGraphObject.m in Sources */,
+				E53BE2821945B5E800BB91F1 /* PHNetworkRequest.m in Sources */,
+				E53BE2871945B5E800BB91F1 /* ACAppDelegate.m in Sources */,
+				E53BE28B1945B5E800BB91F1 /* PHClassTypeConvertor.m in Sources */,
+				E53BE28A1945B5E800BB91F1 /* main.m in Sources */,
+				E53BE27F1945B5E800BB91F1 /* ActivityRecordObjectiveC.xcdatamodeld in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		E53BE2781945B5E800BB91F1 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				E53BE2791945B5E800BB91F1 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		E50974B81945A9C20043B05C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		E50974B91945A9C20043B05C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		E50974BB1945A9C20043B05C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 25FEF343553D4AAD9E2405F1 /* Pods.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "ActivityRecordObjectiveC/Supporting Files/ActivityRecordObjectiveC-Prefix.pch";
+				INFOPLIST_FILE = "$(SRCROOT)/ActivityRecordObjectiveC/Supporting Files/ActivityRecordObjectiveC-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		E50974BC1945A9C20043B05C /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 25FEF343553D4AAD9E2405F1 /* Pods.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "ActivityRecordObjectiveC/Supporting Files/ActivityRecordObjectiveC-Prefix.pch";
+				INFOPLIST_FILE = "$(SRCROOT)/ActivityRecordObjectiveC/Supporting Files/ActivityRecordObjectiveC-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		E50974831945A9C20043B05C /* Build configuration list for PBXProject "ActivityRecordObjectiveC" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E50974B81945A9C20043B05C /* Debug */,
+				E50974B91945A9C20043B05C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E50974BA1945A9C20043B05C /* Build configuration list for PBXNativeTarget "ActivityRecordObjectiveC" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E50974BB1945A9C20043B05C /* Debug */,
+				E50974BC1945A9C20043B05C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		E53BE25D1945B5E800BB91F1 /* ActivityRecordObjectiveC.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				E53BE25E1945B5E800BB91F1 /* ActivityRecordObjectiveC.xcdatamodel */,
+			);
+			currentVersion = E53BE25E1945B5E800BB91F1 /* ActivityRecordObjectiveC.xcdatamodel */;
+			path = ActivityRecordObjectiveC.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
+	};
+	rootObject = E50974801945A9C20043B05C /* Project object */;
+}

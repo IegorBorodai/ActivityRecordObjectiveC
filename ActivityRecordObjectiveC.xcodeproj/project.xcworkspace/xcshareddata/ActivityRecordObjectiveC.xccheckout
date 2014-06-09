@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>972C7812-B233-47D4-91F0-2EC9C6A7A72B</string>
+	<key>IDESourceControlProjectName</key>
+	<string>ActivityRecordObjectiveC</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>3905A953-742E-424E-8CAC-4C14510B2D1B</key>
+		<string>https://github.com/IegorBorodai/ActivityRecordObjectiveC</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>ActivityRecordObjectiveC/ActivityRecordObjectiveC.xcodeproj/project.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>3905A953-742E-424E-8CAC-4C14510B2D1B</key>
+		<string>../../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/IegorBorodai/ActivityRecordObjectiveC</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>110</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>3905A953-742E-424E-8CAC-4C14510B2D1B</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>3905A953-742E-424E-8CAC-4C14510B2D1B</string>
+			<key>IDESourceControlWCCName</key>
+			<string>ActivityRecordObjectiveC</string>
+		</dict>
+	</array>
+</dict>
+</plist>
