@@ -58,6 +58,7 @@
 		63B0ED46193772D600307AF1 /* PHManagedResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 63B0ED42193772D600307AF1 /* PHManagedResponse.m */; };
 		63B0ED491937768B00307AF1 /* PHManagedObjectMappingProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = 63B0ED481937768B00307AF1 /* PHManagedObjectMappingProvider.m */; };
 		63B46ACC1938A5C4004EEBEF /* PHMappedObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 63B46ACB1938A5C4004EEBEF /* PHMappedObject.m */; };
+		63B9D625193F559900283B8D /* PHBaseManagedObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 63B9D624193F559900283B8D /* PHBaseManagedObject.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -166,6 +167,8 @@
 		63B0ED481937768B00307AF1 /* PHManagedObjectMappingProvider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PHManagedObjectMappingProvider.m; sourceTree = "<group>"; };
 		63B46ACA1938A5C4004EEBEF /* PHMappedObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PHMappedObject.h; sourceTree = "<group>"; };
 		63B46ACB1938A5C4004EEBEF /* PHMappedObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PHMappedObject.m; sourceTree = "<group>"; };
+		63B9D623193F559900283B8D /* PHBaseManagedObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PHBaseManagedObject.h; sourceTree = "<group>"; };
+		63B9D624193F559900283B8D /* PHBaseManagedObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PHBaseManagedObject.m; sourceTree = "<group>"; };
 		840C5E12D70D49EEA64B9932 /* Pods.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.xcconfig; path = Pods/Pods.xcconfig; sourceTree = "<group>"; };
 		BA7BE4CC8B94495699DD3B8F /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -388,7 +391,6 @@
 		63B0ED3A193772B700307AF1 /* ManagedObjects */ = {
 			isa = PBXGroup;
 			children = (
-				63B9D61F193F466D00283B8D /* Categories */,
 				63B0ED3B193772D600307AF1 /* PHManagedError.h */,
 				63B0ED3C193772D600307AF1 /* PHManagedError.m */,
 				63B0ED3D193772D600307AF1 /* PHManagedErrorResponse.h */,
@@ -397,6 +399,8 @@
 				63B0ED40193772D600307AF1 /* PHManagedFeatures.m */,
 				63B0ED41193772D600307AF1 /* PHManagedResponse.h */,
 				63B0ED42193772D600307AF1 /* PHManagedResponse.m */,
+				63B9D623193F559900283B8D /* PHBaseManagedObject.h */,
+				63B9D624193F559900283B8D /* PHBaseManagedObject.m */,
 			);
 			name = ManagedObjects;
 			sourceTree = "<group>";
@@ -425,13 +429,6 @@
 				63B0ED481937768B00307AF1 /* PHManagedObjectMappingProvider.m */,
 			);
 			name = MappingProviders;
-			sourceTree = "<group>";
-		};
-		63B9D61F193F466D00283B8D /* Categories */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Categories;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -605,6 +602,7 @@
 				63B0ED1E19375E4F00307AF1 /* NSManagedObjectModel+MagicalRecord.m in Sources */,
 				63B0ED1119375E4F00307AF1 /* NSNumber+MagicalDataImport.m in Sources */,
 				63B0ED1719375E4F00307AF1 /* NSManagedObject+MagicalFinders.m in Sources */,
+				63B9D625193F559900283B8D /* PHBaseManagedObject.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

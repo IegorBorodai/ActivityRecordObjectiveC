@@ -9,7 +9,6 @@
 #import "PHManagedError.h"
 #import "PHManagedResponse.h"
 
-
 @implementation PHManagedError
 
 @dynamic errorType;

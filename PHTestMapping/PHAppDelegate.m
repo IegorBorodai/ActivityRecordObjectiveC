@@ -17,8 +17,8 @@
 #import "PHError.h"
 
 #import "PHManagedErrorResponse.h"
-#import "PHManagedResponse.h"
-#import "PHManagedError.h"
+//#import "PHManagedResponse.h"
+//#import "PHManagedError.h"
 
 #import "EKManagedObjectMapper.h"
 
@@ -37,14 +37,17 @@
     [manager GET:@"http://api.wunderground.com/api/Your_Key/conditions/q/CA/San_Francisco.json" parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSLog(@"JSON: %@", responseObject);
         
-        NSEntityDescription *entityDescription = [NSEntityDescription entityForName:@"PHManagedErrorResponse" inManagedObjectContext:[NSManagedObjectContext MR_defaultContext]];
-        PHManagedErrorResponse *managedErrorResponse = [[PHManagedErrorResponse alloc] initWithEntity:entityDescription insertIntoManagedObjectContext:nil];
+        PHManagedErrorResponse *errorResponse = [[PHManagedErrorResponse alloc] initWithDictionaryFromServer:responseObject];
         
-        errorResponses = [PHManagedErrorResponse MR_findAll];
+//                errorResponses = [PHManagedErrorResponse MR_findAll];
+//                NSLog(@"count: %d", errorResponses.count);
         
-        NSLog(@"count: %d", errorResponses.count);
+//        NSEntityDescription *entityDescription = [NSEntityDescription entityForName:@"PHManagedErrorResponse" inManagedObjectContext:[NSManagedObjectContext MR_defaultContext]];
+//        PHManagedErrorResponse *managedErrorResponse = [[PHManagedErrorResponse alloc] initWithEntity:entityDescription insertIntoManagedObjectContext:nil];
+//
+
         
-//        PHErrorResponse *errorResponse = [[PHErrorResponse alloc] initWithProperties:responseObject];//[EKMapper objectFromExternalRepresentation:responseObject withMapping:[PHObjectMappingProvider errorResponseMapping]];
+//        PHErrorResponse *errorResponse = [[PHErorResponse alloc] initWithProperties:responseObject];//[EKMapper objectFromExternalRepresentation:responseObject withMapping:[PHObjectMappingProvider errorResponseMapping]];
 //        errorResponse.responseObject = responseObject;
 //        
 //        NSLog(@"Mapping on objects:\nError description:%@\n terms of service: %@\n version: %@\n error type: %@",

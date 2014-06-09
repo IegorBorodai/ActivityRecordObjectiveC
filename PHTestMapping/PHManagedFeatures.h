@@ -9,8 +9,9 @@
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 
+#import "PHBaseManagedObject.h"
 
-@interface PHManagedFeatures : NSManagedObject
+@interface PHManagedFeatures : PHBaseManagedObject
 
 @property (nonatomic, retain) NSManagedObject *response;
 

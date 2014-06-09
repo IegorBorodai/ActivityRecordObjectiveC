@@ -9,9 +9,11 @@
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 
+#import "PHBaseManagedObject.h"
+
 @class PHManagedResponse;
 
-@interface PHManagedError : NSManagedObject
+@interface PHManagedError : PHBaseManagedObject
 
 @property (nonatomic, retain) NSString * errorType;
 @property (nonatomic, retain) NSString * errorDescription;

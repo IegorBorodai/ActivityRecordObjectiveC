@@ -10,7 +10,6 @@
 #import "PHManagedFeatures.h"
 #import "PHManagedError.h"
 
-
 @implementation PHManagedResponse
 
 @dynamic termsofService;

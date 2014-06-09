@@ -9,10 +9,12 @@
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 
+#import "PHBaseManagedObject.h"
+
 @class PHManagedFeatures;
 @class PHManagedError;
 
-@interface PHManagedResponse : NSManagedObject
+@interface PHManagedResponse : PHBaseManagedObject
 
 @property (nonatomic, retain) NSString * termsofService;
 @property (nonatomic, retain) NSString * version;

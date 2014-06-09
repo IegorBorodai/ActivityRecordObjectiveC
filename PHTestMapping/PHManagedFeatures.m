@@ -8,7 +8,6 @@
 
 #import "PHManagedFeatures.h"
 
-
 @implementation PHManagedFeatures
 
 @dynamic response;
