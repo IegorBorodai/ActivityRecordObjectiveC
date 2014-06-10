@@ -8,6 +8,6 @@
 
 #import "AFURLResponseSerialization.h"
 
-@interface ACResponseSerializer : AFJSONResponseSerializer
+@interface NCNetworkResponseSerializer : AFJSONResponseSerializer
 
 @end

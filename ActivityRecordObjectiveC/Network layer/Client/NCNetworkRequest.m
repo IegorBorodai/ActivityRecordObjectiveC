@@ -6,13 +6,13 @@
 //  Copyright (c) 2012 massinteractiveserviceslimited. All rights reserved.
 //
 
-#import "PHNetworkRequest.h"
-#import "PHPhoenix.h"
+#import "NCNetworkRequest.h"
+#import "NCNetworkClient.h"
 
-@implementation PHNetworkHTTPRequestFileParameter
+@implementation NCNetworkHTTPRequestFileParameter
 @end
 
-@implementation PHNetworkRequest
+@implementation NCNetworkRequest
 
 #pragma mark - Control methods
 

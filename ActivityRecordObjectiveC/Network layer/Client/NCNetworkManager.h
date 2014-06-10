@@ -7,14 +7,14 @@
 //
 
 //#import "PHNetworkOperation.h"
-#import "PHNetworkRequest.h"
+#import "NCNetworkRequest.h"
 
 typedef void (^SuccessBlock)(NSURLSessionTask* task);
 typedef void (^FailureBlock)(NSError* error, BOOL isCanceled);
 typedef void (^FailureBlockWithOperation)(NSURLSessionTask* task, NSError* error, BOOL isCanceled);
 typedef void (^ProgressBlock)(NSURLSessionTask* task, NSInteger totalBytesWritten, NSInteger totalBytesExpectedToWrite);
 
-@interface PHNetworkManager : NSObject
+@interface NCNetworkManager : NSObject
 
 @property (nonatomic, readonly)    NSURL                                 *baseURL;
 @property (nonatomic, readonly)    AFHTTPSessionManager                  *manager;
@@ -23,7 +23,7 @@ typedef void (^ProgressBlock)(NSURLSessionTask* task, NSInteger totalBytesWritte
 
 - (BOOL)checkReachabilityStatusWithError:(NSError* __autoreleasing*)error;
 
-- (NSURLSessionTask*)enqueueTaskWithNetworkRequest:(PHNetworkRequest*)networkRequest
+- (NSURLSessionTask*)enqueueTaskWithNetworkRequest:(NCNetworkRequest*)networkRequest
                                                   success:(SuccessBlock)success
                                                   failure:(FailureBlock)failure
                                                  progress:(NSProgress*)progress;

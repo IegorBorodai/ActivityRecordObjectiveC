@@ -13,19 +13,19 @@
 		E50974901945A9C20043B05C /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E509748F1945A9C20043B05C /* UIKit.framework */; };
 		E50974921945A9C20043B05C /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E50974911945A9C20043B05C /* CoreData.framework */; };
 		E53BE27F1945B5E800BB91F1 /* ActivityRecordObjectiveC.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = E53BE25D1945B5E800BB91F1 /* ActivityRecordObjectiveC.xcdatamodeld */; };
-		E53BE2801945B5E800BB91F1 /* PHNetworkManager.m in Sources */ = {isa = PBXBuildFile; fileRef = E53BE2631945B5E800BB91F1 /* PHNetworkManager.m */; };
-		E53BE2821945B5E800BB91F1 /* PHNetworkRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = E53BE2671945B5E800BB91F1 /* PHNetworkRequest.m */; };
+		E53BE2801945B5E800BB91F1 /* NCNetworkManager.m in Sources */ = {isa = PBXBuildFile; fileRef = E53BE2631945B5E800BB91F1 /* NCNetworkManager.m */; };
+		E53BE2821945B5E800BB91F1 /* NCNetworkRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = E53BE2671945B5E800BB91F1 /* NCNetworkRequest.m */; };
 		E53BE2841945B5E800BB91F1 /* PHGraphObject.m in Sources */ = {isa = PBXBuildFile; fileRef = E53BE26D1945B5E800BB91F1 /* PHGraphObject.m */; };
-		E53BE2851945B5E800BB91F1 /* PHPhoenix.m in Sources */ = {isa = PBXBuildFile; fileRef = E53BE2701945B5E800BB91F1 /* PHPhoenix.m */; };
+		E53BE2851945B5E800BB91F1 /* NCNetworkClient.m in Sources */ = {isa = PBXBuildFile; fileRef = E53BE2701945B5E800BB91F1 /* NCNetworkClient.m */; };
 		E53BE2861945B5E800BB91F1 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E53BE2721945B5E800BB91F1 /* Images.xcassets */; };
 		E53BE2871945B5E800BB91F1 /* ACAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = E53BE2751945B5E800BB91F1 /* ACAppDelegate.m */; };
 		E53BE2891945B5E800BB91F1 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = E53BE2781945B5E800BB91F1 /* InfoPlist.strings */; };
 		E53BE28A1945B5E800BB91F1 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = E53BE27A1945B5E800BB91F1 /* main.m */; };
 		E53BE28B1945B5E800BB91F1 /* PHClassTypeConvertor.m in Sources */ = {isa = PBXBuildFile; fileRef = E53BE27D1945B5E800BB91F1 /* PHClassTypeConvertor.m */; };
 		E53BE28F1945DFAD00BB91F1 /* PHInfoRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = E53BE28E1945DFAD00BB91F1 /* PHInfoRequest.m */; };
-		E53BE2931945EF4E00BB91F1 /* ACRequestSerializer.m in Sources */ = {isa = PBXBuildFile; fileRef = E53BE2921945EF4E00BB91F1 /* ACRequestSerializer.m */; };
+		E53BE2931945EF4E00BB91F1 /* NCNetworkRequestSerializer.m in Sources */ = {isa = PBXBuildFile; fileRef = E53BE2921945EF4E00BB91F1 /* NCNetworkRequestSerializer.m */; };
 		E573EF5B1946FBDC00017FE5 /* PHImageDownloadRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = E573EF5A1946FBDC00017FE5 /* PHImageDownloadRequest.m */; };
-		E573EF5E1947037B00017FE5 /* ACResponseSerializer.m in Sources */ = {isa = PBXBuildFile; fileRef = E573EF5D1947037B00017FE5 /* ACResponseSerializer.m */; };
+		E573EF5E1947037B00017FE5 /* NCNetworkResponseSerializer.m in Sources */ = {isa = PBXBuildFile; fileRef = E573EF5D1947037B00017FE5 /* NCNetworkResponseSerializer.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -38,15 +38,15 @@
 		E50974911945A9C20043B05C /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		E50974A91945A9C20043B05C /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		E53BE25E1945B5E800BB91F1 /* ActivityRecordObjectiveC.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ActivityRecordObjectiveC.xcdatamodel; sourceTree = "<group>"; };
-		E53BE2621945B5E800BB91F1 /* PHNetworkManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PHNetworkManager.h; sourceTree = "<group>"; };
-		E53BE2631945B5E800BB91F1 /* PHNetworkManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PHNetworkManager.m; sourceTree = "<group>"; };
-		E53BE2661945B5E800BB91F1 /* PHNetworkRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PHNetworkRequest.h; sourceTree = "<group>"; };
-		E53BE2671945B5E800BB91F1 /* PHNetworkRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PHNetworkRequest.m; sourceTree = "<group>"; };
+		E53BE2621945B5E800BB91F1 /* NCNetworkManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NCNetworkManager.h; sourceTree = "<group>"; };
+		E53BE2631945B5E800BB91F1 /* NCNetworkManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NCNetworkManager.m; sourceTree = "<group>"; };
+		E53BE2661945B5E800BB91F1 /* NCNetworkRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NCNetworkRequest.h; sourceTree = "<group>"; };
+		E53BE2671945B5E800BB91F1 /* NCNetworkRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NCNetworkRequest.m; sourceTree = "<group>"; };
 		E53BE26B1945B5E800BB91F1 /* LoggingDefs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoggingDefs.h; sourceTree = "<group>"; };
 		E53BE26C1945B5E800BB91F1 /* PHGraphObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PHGraphObject.h; sourceTree = "<group>"; };
 		E53BE26D1945B5E800BB91F1 /* PHGraphObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PHGraphObject.m; sourceTree = "<group>"; };
-		E53BE26F1945B5E800BB91F1 /* PHPhoenix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PHPhoenix.h; sourceTree = "<group>"; };
-		E53BE2701945B5E800BB91F1 /* PHPhoenix.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PHPhoenix.m; sourceTree = "<group>"; };
+		E53BE26F1945B5E800BB91F1 /* NCNetworkClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NCNetworkClient.h; sourceTree = "<group>"; };
+		E53BE2701945B5E800BB91F1 /* NCNetworkClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NCNetworkClient.m; sourceTree = "<group>"; };
 		E53BE2721945B5E800BB91F1 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		E53BE2741945B5E800BB91F1 /* ACAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACAppDelegate.h; sourceTree = "<group>"; };
 		E53BE2751945B5E800BB91F1 /* ACAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACAppDelegate.m; sourceTree = "<group>"; };
@@ -58,12 +58,12 @@
 		E53BE27D1945B5E800BB91F1 /* PHClassTypeConvertor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PHClassTypeConvertor.m; sourceTree = "<group>"; };
 		E53BE28D1945DFAD00BB91F1 /* PHInfoRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PHInfoRequest.h; path = Test/PHInfoRequest.h; sourceTree = "<group>"; };
 		E53BE28E1945DFAD00BB91F1 /* PHInfoRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PHInfoRequest.m; path = Test/PHInfoRequest.m; sourceTree = "<group>"; };
-		E53BE2911945EF4E00BB91F1 /* ACRequestSerializer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACRequestSerializer.h; sourceTree = "<group>"; };
-		E53BE2921945EF4E00BB91F1 /* ACRequestSerializer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACRequestSerializer.m; sourceTree = "<group>"; };
+		E53BE2911945EF4E00BB91F1 /* NCNetworkRequestSerializer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NCNetworkRequestSerializer.h; sourceTree = "<group>"; };
+		E53BE2921945EF4E00BB91F1 /* NCNetworkRequestSerializer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NCNetworkRequestSerializer.m; sourceTree = "<group>"; };
 		E573EF591946FBDC00017FE5 /* PHImageDownloadRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PHImageDownloadRequest.h; path = "../../ios_localsgowild/Submodules/PhoenixSDK/Requests/AccessTokenKey NOT required/PHImageDownloadRequest.h"; sourceTree = "<group>"; };
 		E573EF5A1946FBDC00017FE5 /* PHImageDownloadRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PHImageDownloadRequest.m; path = "../../ios_localsgowild/Submodules/PhoenixSDK/Requests/AccessTokenKey NOT required/PHImageDownloadRequest.m"; sourceTree = "<group>"; };
-		E573EF5C1947037B00017FE5 /* ACResponseSerializer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACResponseSerializer.h; sourceTree = "<group>"; };
-		E573EF5D1947037B00017FE5 /* ACResponseSerializer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACResponseSerializer.m; sourceTree = "<group>"; };
+		E573EF5C1947037B00017FE5 /* NCNetworkResponseSerializer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NCNetworkResponseSerializer.h; sourceTree = "<group>"; };
+		E573EF5D1947037B00017FE5 /* NCNetworkResponseSerializer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NCNetworkResponseSerializer.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -158,8 +158,8 @@
 				E53BE26B1945B5E800BB91F1 /* LoggingDefs.h */,
 				E53BE26C1945B5E800BB91F1 /* PHGraphObject.h */,
 				E53BE26D1945B5E800BB91F1 /* PHGraphObject.m */,
-				E53BE26F1945B5E800BB91F1 /* PHPhoenix.h */,
-				E53BE2701945B5E800BB91F1 /* PHPhoenix.m */,
+				E53BE26F1945B5E800BB91F1 /* NCNetworkClient.h */,
+				E53BE2701945B5E800BB91F1 /* NCNetworkClient.m */,
 			);
 			path = "Network layer";
 			sourceTree = "<group>";
@@ -167,14 +167,14 @@
 		E53BE2611945B5E800BB91F1 /* Client */ = {
 			isa = PBXGroup;
 			children = (
-				E53BE2621945B5E800BB91F1 /* PHNetworkManager.h */,
-				E53BE2631945B5E800BB91F1 /* PHNetworkManager.m */,
-				E53BE2661945B5E800BB91F1 /* PHNetworkRequest.h */,
-				E53BE2671945B5E800BB91F1 /* PHNetworkRequest.m */,
-				E53BE2911945EF4E00BB91F1 /* ACRequestSerializer.h */,
-				E53BE2921945EF4E00BB91F1 /* ACRequestSerializer.m */,
-				E573EF5C1947037B00017FE5 /* ACResponseSerializer.h */,
-				E573EF5D1947037B00017FE5 /* ACResponseSerializer.m */,
+				E53BE2621945B5E800BB91F1 /* NCNetworkManager.h */,
+				E53BE2631945B5E800BB91F1 /* NCNetworkManager.m */,
+				E53BE2661945B5E800BB91F1 /* NCNetworkRequest.h */,
+				E53BE2671945B5E800BB91F1 /* NCNetworkRequest.m */,
+				E53BE2911945EF4E00BB91F1 /* NCNetworkRequestSerializer.h */,
+				E53BE2921945EF4E00BB91F1 /* NCNetworkRequestSerializer.m */,
+				E573EF5C1947037B00017FE5 /* NCNetworkResponseSerializer.h */,
+				E573EF5D1947037B00017FE5 /* NCNetworkResponseSerializer.m */,
 			);
 			path = Client;
 			sourceTree = "<group>";
@@ -326,13 +326,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E53BE2801945B5E800BB91F1 /* PHNetworkManager.m in Sources */,
-				E53BE2851945B5E800BB91F1 /* PHPhoenix.m in Sources */,
-				E573EF5E1947037B00017FE5 /* ACResponseSerializer.m in Sources */,
+				E53BE2801945B5E800BB91F1 /* NCNetworkManager.m in Sources */,
+				E53BE2851945B5E800BB91F1 /* NCNetworkClient.m in Sources */,
+				E573EF5E1947037B00017FE5 /* NCNetworkResponseSerializer.m in Sources */,
 				E53BE28F1945DFAD00BB91F1 /* PHInfoRequest.m in Sources */,
-				E53BE2931945EF4E00BB91F1 /* ACRequestSerializer.m in Sources */,
+				E53BE2931945EF4E00BB91F1 /* NCNetworkRequestSerializer.m in Sources */,
 				E53BE2841945B5E800BB91F1 /* PHGraphObject.m in Sources */,
-				E53BE2821945B5E800BB91F1 /* PHNetworkRequest.m in Sources */,
+				E53BE2821945B5E800BB91F1 /* NCNetworkRequest.m in Sources */,
 				E573EF5B1946FBDC00017FE5 /* PHImageDownloadRequest.m in Sources */,
 				E53BE2871945B5E800BB91F1 /* ACAppDelegate.m in Sources */,
 				E53BE28B1945B5E800BB91F1 /* PHClassTypeConvertor.m in Sources */,

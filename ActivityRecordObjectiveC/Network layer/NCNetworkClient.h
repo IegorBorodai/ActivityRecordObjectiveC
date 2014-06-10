@@ -7,15 +7,15 @@
 //
 
 
-#import "PHNetworkManager.h"
+#import "NCNetworkManager.h"
 
-@interface PHPhoenix : NSObject
+@interface NCNetworkClient : NSObject
 
 // Public
 + (void)initHTTPClientWithRootPath:(NSString*)baseURL;
 
 // Singletons
-+ (PHNetworkManager *)HTTPClient;
++ (NCNetworkManager *)HTTPClient;
 
 // Network status
 - (BOOL)checkReachabilityStatusWithError:(NSError* __autoreleasing*)error;

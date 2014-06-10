@@ -6,17 +6,17 @@
 //  Copyright (c) 2014 massinteractiveserviceslimited. All rights reserved.
 //
 
-#import "PHNetworkManager.h"
+#import "NCNetworkManager.h"
 
-#import "ACRequestSerializer.h"
-#import "ACResponseSerializer.h"
+#import "NCNetworkRequestSerializer.h"
+#import "NCNetworkResponseSerializer.h"
 #import "PHImageDownloadRequest.h"
 
 #define MAX_CONCURENT_REQUESTS 100
 
 typedef void (^failBlock)(NSError* error);
 
-@interface PHNetworkManager ()
+@interface NCNetworkManager ()
 
 
 @property (nonatomic)                   AFNetworkReachabilityStatus           reachabilityStatus;
@@ -26,7 +26,7 @@ typedef void (^failBlock)(NSError* error);
 
 @end
 
-@implementation PHNetworkManager
+@implementation NCNetworkManager
 
 #pragma mark - Lifecycle
 
@@ -47,8 +47,8 @@ typedef void (^failBlock)(NSError* error);
         
         _sessionManager = [[AFHTTPSessionManager alloc] initWithBaseURL:url sessionConfiguration:taskConfig];
         
-        [_sessionManager setRequestSerializer:[ACRequestSerializer serializer]];
-        [_sessionManager setResponseSerializer:[ACResponseSerializer serializer]];
+        [_sessionManager setRequestSerializer:[NCNetworkRequestSerializer serializer]];
+        [_sessionManager setResponseSerializer:[NCNetworkResponseSerializer serializer]];
         
         
         __weak typeof(self)weakSelf = self;
@@ -109,7 +109,7 @@ typedef void (^failBlock)(NSError* error);
 
 #pragma mark - Operation cycle
 
-- (NSURLSessionTask*)enqueueTaskWithNetworkRequest:(PHNetworkRequest*)networkRequest
+- (NSURLSessionTask*)enqueueTaskWithNetworkRequest:(NCNetworkRequest*)networkRequest
                                                 success:(SuccessBlock)successBlock
                                                 failure:(FailureBlock)failureBlock
                                                progress:(NSProgress*)progress
@@ -120,7 +120,7 @@ typedef void (^failBlock)(NSError* error);
     
     if (isInternetEnabled) {
     
-    NSMutableURLRequest *request = [((ACRequestSerializer*)self.sessionManager.requestSerializer) serializeRequestFromNetworkRequest:networkRequest error:&error];
+    NSMutableURLRequest *request = [((NCNetworkRequestSerializer*)self.sessionManager.requestSerializer) serializeRequestFromNetworkRequest:networkRequest error:&error];
     
     if (error) {
         failureBlock(error, NO);

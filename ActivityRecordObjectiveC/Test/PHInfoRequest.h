@@ -6,9 +6,9 @@
 //  Copyright (c) 2013 massinteractiveserviceslimited. All rights reserved.
 //
 
-#import "PHNetworkRequest.h"
+#import "NCNetworkRequest.h"
 
-@interface PHInfoRequest : PHNetworkRequest
+@interface PHInfoRequest : NCNetworkRequest
 
 @property NSDictionary *genderAttributes;
 

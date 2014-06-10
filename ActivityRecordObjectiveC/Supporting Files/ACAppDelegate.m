@@ -7,7 +7,7 @@
 //
 
 #import "ACAppDelegate.h"
-#import "PHPhoenix.h"
+#import "NCNetworkClient.h"
 
 @implementation ACAppDelegate
 
@@ -21,8 +21,8 @@
     // Override point for customization after application launch.
     self.window.backgroundColor = [UIColor whiteColor];
     [self.window makeKeyAndVisible];
-    [PHPhoenix initHTTPClientWithRootPath:@"https://www.matureaffection.com"];
-    [[PHPhoenix HTTPClient] addObserver:self forKeyPath:@"reachabilityStatus" options:NSKeyValueObservingOptionNew context:NULL];
+    [NCNetworkClient initHTTPClientWithRootPath:@"https://www.matureaffection.com"];
+    [[NCNetworkClient HTTPClient] addObserver:self forKeyPath:@"reachabilityStatus" options:NSKeyValueObservingOptionNew context:NULL];
     
     return YES;
 }
@@ -32,7 +32,7 @@
                         change:(NSDictionary *)change
                        context:(void *)context
 {
-    [PHPhoenix getGenderInfoWithSuccessBlock:^(NSDictionary *genderAttributes) {
+    [NCNetworkClient getGenderInfoWithSuccessBlock:^(NSDictionary *genderAttributes) {
         NSLog([genderAttributes description]);
     } failure:^(NSError *error, BOOL isCanceled) {
         NSLog([error localizedDescription]);

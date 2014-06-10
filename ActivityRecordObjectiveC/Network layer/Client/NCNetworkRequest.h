@@ -9,7 +9,7 @@
 @import Foundation;
 @import ObjectiveC.runtime;
 
-@interface PHNetworkHTTPRequestFileParameter : NSObject
+@interface NCNetworkHTTPRequestFileParameter : NSObject
 
 @property(copy, nonatomic)	NSURL*		fileURL;
 @property(copy, nonatomic)	NSString*	filename;
@@ -18,7 +18,7 @@
 
 @end
 
-@interface PHNetworkRequest : NSObject
+@interface NCNetworkRequest : NSObject
 {
 	NSString*						_path;
 	NSMutableDictionary*			_parameters;

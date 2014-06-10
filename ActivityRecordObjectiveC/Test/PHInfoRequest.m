@@ -7,7 +7,7 @@
 //
 
 #import "PHInfoRequest.h"
-#import "PHPhoenix.h"
+#import "NCNetworkClient.h"
 
 @implementation PHInfoRequest
 

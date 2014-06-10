@@ -6,13 +6,13 @@
 //  Copyright (c) 2014 Iegor Borodai. All rights reserved.
 //
 
-#import "ACRequestSerializer.h"
-#import "PHPhoenix.h"
+#import "NCNetworkRequestSerializer.h"
+#import "NCNetworkClient.h"
 
-@implementation ACRequestSerializer
+@implementation NCNetworkRequestSerializer
 
 
--(NSMutableURLRequest *)serializeRequestFromNetworkRequest:(PHNetworkRequest*)networkRequest error:(NSError* __autoreleasing*)error
+-(NSMutableURLRequest *)serializeRequestFromNetworkRequest:(NCNetworkRequest*)networkRequest error:(NSError* __autoreleasing*)error
 {
     NSMutableURLRequest *request = nil;
     __block NSError     *localError = nil;
@@ -34,11 +34,11 @@
 	}
     
     if ([networkRequest.files count] > 0) {
-        request = [self  multipartFormRequestWithMethod:@"POST" URLString:[[NSURL URLWithString:networkRequest.path relativeToURL:[PHPhoenix HTTPClient].baseURL] absoluteString] parameters:networkRequest.parameters constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
+        request = [self  multipartFormRequestWithMethod:@"POST" URLString:[[NSURL URLWithString:networkRequest.path relativeToURL:[NCNetworkClient HTTPClient].baseURL] absoluteString] parameters:networkRequest.parameters constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
             
-            for(PHNetworkHTTPRequestFileParameter* file in networkRequest.files)
+            for(NCNetworkHTTPRequestFileParameter* file in networkRequest.files)
             {
-                if (![file isKindOfClass:[PHNetworkHTTPRequestFileParameter class]]) {
+                if (![file isKindOfClass:[NCNetworkHTTPRequestFileParameter class]]) {
                     localError = [NSError errorWithDomain:@"Global" code:0 userInfo:@{NSLocalizedDescriptionKey: @"Incorrect file parameter class. Must be PHNetworkHTTPRequestFileParameter"}];
                     continue;
                 }
@@ -61,7 +61,7 @@
         } error:&localError];
 	} else {
 		request = [self requestWithMethod:networkRequest.method
-                                URLString:[[NSURL URLWithString:networkRequest.path relativeToURL:[PHPhoenix HTTPClient].baseURL] absoluteString]
+                                URLString:[[NSURL URLWithString:networkRequest.path relativeToURL:[NCNetworkClient HTTPClient].baseURL] absoluteString]
                                parameters:networkRequest.parameters
                                     error:&localError];
 	}

@@ -6,13 +6,13 @@
 //  Copyright (c) 2013 massinteractiveserviceslimited. All rights reserved.
 //
 
-#import "PHPhoenix.h"
+#import "NCNetworkClient.h"
 #import "PHInfoRequest.h"
 
 static dispatch_once_t NetworkToken;
-static PHNetworkManager *sharedNetworkClient = nil;
+static NCNetworkManager *sharedNetworkClient = nil;
 
-@implementation PHPhoenix
+@implementation NCNetworkClient
 
 - (BOOL)checkReachabilityStatusWithError:(NSError* __autoreleasing*)error;
 {
@@ -21,10 +21,10 @@ static PHNetworkManager *sharedNetworkClient = nil;
 
 #pragma mark - Sigleton methods
 
-+ (PHNetworkManager *)HTTPClient
++ (NCNetworkManager *)HTTPClient
 {
     dispatch_once(&NetworkToken, ^{
-        sharedNetworkClient = [[PHNetworkManager alloc] initWithBaseURL:nil];
+        sharedNetworkClient = [[NCNetworkManager alloc] initWithBaseURL:nil];
     });
 	
     return sharedNetworkClient;
@@ -35,7 +35,7 @@ static PHNetworkManager *sharedNetworkClient = nil;
 + (void)initHTTPClientWithRootPath:(NSString*)baseURL
 {
     dispatch_once(&NetworkToken, ^{
-        sharedNetworkClient = [[PHNetworkManager alloc] initWithBaseURL:[NSURL URLWithString:baseURL]];
+        sharedNetworkClient = [[NCNetworkManager alloc] initWithBaseURL:[NSURL URLWithString:baseURL]];
     });
 }
 
@@ -43,7 +43,7 @@ static PHNetworkManager *sharedNetworkClient = nil;
                                              failure:(void (^)(NSError *error, BOOL isCanceled))failure
 {
     PHInfoRequest * infoRequest = [PHInfoRequest new];
-    NSURLSessionTask* task = [[PHPhoenix HTTPClient] enqueueTaskWithNetworkRequest:infoRequest success:^(NSURLSessionTask *task) {
+    NSURLSessionTask* task = [[NCNetworkClient HTTPClient] enqueueTaskWithNetworkRequest:infoRequest success:^(NSURLSessionTask *task) {
         if (success) {
             success(infoRequest.genderAttributes);
         }

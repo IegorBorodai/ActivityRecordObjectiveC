@@ -6,9 +6,9 @@
 //  Copyright (c) 2014 Iegor Borodai. All rights reserved.
 //
 
-#import "ACResponseSerializer.h"
+#import "NCNetworkResponseSerializer.h"
 
-@implementation ACResponseSerializer
+@implementation NCNetworkResponseSerializer
 
 - (BOOL)validateResponse:(NSHTTPURLResponse *)response
                     data:(NSData *)data
