@@ -9,6 +9,15 @@
 @import Foundation;
 @import ObjectiveC.runtime;
 
+@interface PHNetworkHTTPRequestFileParameter : NSObject
+
+@property(copy, nonatomic)	NSURL*		fileURL;
+@property(copy, nonatomic)	NSString*	filename;
+@property(copy, nonatomic)	NSString*	mimeType;
+@property(copy, nonatomic)	NSData*     fileData;
+
+@end
+
 @interface PHNetworkRequest : NSObject
 {
 	NSString*						_path;
@@ -20,18 +29,18 @@
     NSError*                        _error;
 }
 
-@property (readonly)	NSString*                           path;
-@property (readonly)	NSMutableDictionary*                parameters;
-@property (readonly)	NSString*                           method;
-@property (readonly)    BOOL                                autorizationRequired;
-@property (readonly)    NSMutableArray                      *files;
-@property (readonly)	NSMutableDictionary*                customHeaders;
-@property (nonatomic, strong)    NSError*                   error;
+@property (readonly, nonatomic)	NSString*                           path;
+@property (readonly, nonatomic)	NSMutableDictionary*                parameters;
+@property (readonly, nonatomic)	NSString*                           method;
+@property (readonly, nonatomic) BOOL                                autorizationRequired;
+@property (readonly, nonatomic) NSMutableArray                      *files;
+@property (readonly, nonatomic)	NSMutableDictionary*                customHeaders;
+@property (nonatomic, strong)   NSError*                            error;
 
 - (BOOL)prepareAndCheckRequestParameters;
-- (BOOL)parseResponseSucessfully:(id)responseObject;
-- (BOOL)parseJSONDataSucessfully:(id)responseObject error:(NSError* __autoreleasing *)error;
-- (void)createErrorWithResponseObject:(NSDictionary*)responseObject;
-- (BOOL)validateJsonErrorObject:(id)object withKey:(NSString*)key;
+//- (BOOL)parseResponseSucessfully:(id)responseObject;
+- (BOOL)parseJSON:(id)responseObject error:(NSError* __autoreleasing *)error;
+//- (void)createErrorWithResponseObject:(NSDictionary*)responseObject;
+//- (BOOL)validateJsonErrorObject:(id)object withKey:(NSString*)key;
 
 @end

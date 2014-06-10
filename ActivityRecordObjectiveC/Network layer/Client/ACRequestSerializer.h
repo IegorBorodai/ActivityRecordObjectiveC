@@ -6,8 +6,10 @@
 //  Copyright (c) 2014 Iegor Borodai. All rights reserved.
 //
 
-//#import <AFNetworking/AFURLRequestSerialization.h>
+#import "PHNetworkRequest.h"
 
 @interface ACRequestSerializer : AFHTTPRequestSerializer <AFURLRequestSerialization>
+
+-(NSMutableURLRequest *)serializeRequestFromNetworkRequest:(PHNetworkRequest*)networkRequest error:(NSError* __autoreleasing*)error;
 
 @end

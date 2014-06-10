@@ -39,7 +39,7 @@
     return result;
 }
 
-- (BOOL)parseJSONDataSucessfully:(id)responseObject error:(NSError* __autoreleasing  *)error
+- (BOOL)parseJSON:(id)responseObject error:(NSError* __autoreleasing *)error;
 {
     if (responseObject[@"gender"]) {
         if ([responseObject[@"gender"] isKindOfClass:[NSDictionary class]]) {
