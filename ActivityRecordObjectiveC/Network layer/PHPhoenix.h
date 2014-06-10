@@ -18,8 +18,7 @@
 + (PHNetworkManager *)HTTPClient;
 
 // Network status
-+ (BOOL)checkReachabilityStatus;
-+ (void)checkReachabilityStatusWithSuccess:(void (^)(void))success failure:(void (^)(NSError *error))failure;
+- (BOOL)checkReachabilityStatusWithError:(NSError* __autoreleasing*)error;
 
 //Requests
 + (NSURLSessionTask*)getGenderInfoWithSuccessBlock:(void (^)(NSDictionary *genderAttributes))success

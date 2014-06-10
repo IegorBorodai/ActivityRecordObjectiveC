@@ -26,9 +26,9 @@
                            data:(NSData *)data
                           error:(NSError *__autoreleasing *)error
 {
-    NSDictionary* resposeData = [super responseObjectForResponse:response data:data error:error];
+    NSDictionary* responseData = [super responseObjectForResponse:response data:data error:error];
     
-    return resposeData;
+    return responseData;
 }
 
 @end

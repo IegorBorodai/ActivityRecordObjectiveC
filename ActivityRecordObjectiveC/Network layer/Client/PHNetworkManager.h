@@ -23,7 +23,7 @@ typedef void (^ProgressBlock)(NSURLSessionTask* task, NSInteger totalBytesWritte
 
 - (BOOL)checkReachabilityStatusWithError:(NSError* __autoreleasing*)error;
 
-- (NSURLSessionTask*)enqueueOperationWithNetworkRequest:(PHNetworkRequest*)networkRequest
+- (NSURLSessionTask*)enqueueTaskWithNetworkRequest:(PHNetworkRequest*)networkRequest
                                                   success:(SuccessBlock)success
                                                   failure:(FailureBlock)failure
                                                  progress:(NSProgress*)progress;

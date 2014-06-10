@@ -7,6 +7,7 @@
 //
 
 #import "ACAppDelegate.h"
+#import "PHPhoenix.h"
 
 @implementation ACAppDelegate
 
@@ -20,10 +21,22 @@
     // Override point for customization after application launch.
     self.window.backgroundColor = [UIColor whiteColor];
     [self.window makeKeyAndVisible];
-    
-    
+    [PHPhoenix initHTTPClientWithRootPath:@"https://www.matureaffection.com"];
+    [[PHPhoenix HTTPClient] addObserver:self forKeyPath:@"reachabilityStatus" options:NSKeyValueObservingOptionNew context:NULL];
     
     return YES;
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath
+                      ofObject:(id)object
+                        change:(NSDictionary *)change
+                       context:(void *)context
+{
+    [PHPhoenix getGenderInfoWithSuccessBlock:^(NSDictionary *genderAttributes) {
+        NSLog([genderAttributes description]);
+    } failure:^(NSError *error, BOOL isCanceled) {
+        NSLog([error localizedDescription]);
+    }];
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application

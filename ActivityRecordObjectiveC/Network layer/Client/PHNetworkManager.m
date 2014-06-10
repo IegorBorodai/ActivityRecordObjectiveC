@@ -8,9 +8,8 @@
 
 #import "PHNetworkManager.h"
 
-//#import "AFNetworking/AFHTTPSessionManager.h"
-//#import "AFNetworking/AFHTTPRequestOperationManager.h"
 #import "ACRequestSerializer.h"
+#import "ACResponseSerializer.h"
 #import "PHImageDownloadRequest.h"
 
 #define MAX_CONCURENT_REQUESTS 100
@@ -42,10 +41,14 @@ typedef void (^failBlock)(NSError* error);
         taskConfig.timeoutIntervalForRequest = 0;
         taskConfig.allowsCellularAccess = YES;
         taskConfig.HTTPShouldSetCookies = NO;
+
+        NSDictionary* headers = @{@"X-Requested-With" : @"XMLHttpRequest", @"App-Marker":@"hios8dc1c8e1"};
+        taskConfig.HTTPAdditionalHeaders = headers;
+        
         _sessionManager = [[AFHTTPSessionManager alloc] initWithBaseURL:url sessionConfiguration:taskConfig];
         
-        [_sessionManager setResponseSerializer:[AFHTTPResponseSerializer serializer]];
         [_sessionManager setRequestSerializer:[ACRequestSerializer serializer]];
+        [_sessionManager setResponseSerializer:[ACResponseSerializer serializer]];
         
         
         __weak typeof(self)weakSelf = self;
@@ -106,16 +109,16 @@ typedef void (^failBlock)(NSError* error);
 
 #pragma mark - Operation cycle
 
-- (NSURLSessionTask*)enqueueOperationWithNetworkRequest:(PHNetworkRequest*)networkRequest
+- (NSURLSessionTask*)enqueueTaskWithNetworkRequest:(PHNetworkRequest*)networkRequest
                                                 success:(SuccessBlock)successBlock
                                                 failure:(FailureBlock)failureBlock
                                                progress:(NSProgress*)progress
 {
    __block  NSError             *error = nil;
     NSURLSessionTask            *task = nil;
-    BOOL isInternetEnable = [self checkReachabilityStatusWithError:&error];
+    BOOL isInternetEnabled = [self checkReachabilityStatusWithError:&error];
     
-    if (isInternetEnable) {
+    if (isInternetEnabled) {
     
     NSMutableURLRequest *request = [((ACRequestSerializer*)self.sessionManager.requestSerializer) serializeRequestFromNetworkRequest:networkRequest error:&error];
     

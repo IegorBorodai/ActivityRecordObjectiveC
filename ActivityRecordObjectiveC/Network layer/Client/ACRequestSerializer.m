@@ -7,6 +7,7 @@
 //
 
 #import "ACRequestSerializer.h"
+#import "PHPhoenix.h"
 
 @implementation ACRequestSerializer
 
@@ -33,7 +34,7 @@
 	}
     
     if ([networkRequest.files count] > 0) {
-        request = [self  multipartFormRequestWithMethod:@"POST" URLString:networkRequest.path parameters:networkRequest.parameters constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
+        request = [self  multipartFormRequestWithMethod:@"POST" URLString:[[NSURL URLWithString:networkRequest.path relativeToURL:[PHPhoenix HTTPClient].baseURL] absoluteString] parameters:networkRequest.parameters constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
             
             for(PHNetworkHTTPRequestFileParameter* file in networkRequest.files)
             {
@@ -60,7 +61,7 @@
         } error:&localError];
 	} else {
 		request = [self requestWithMethod:networkRequest.method
-                                URLString:networkRequest.path
+                                URLString:[[NSURL URLWithString:networkRequest.path relativeToURL:[PHPhoenix HTTPClient].baseURL] absoluteString]
                                parameters:networkRequest.parameters
                                     error:&localError];
 	}

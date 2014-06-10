@@ -9,6 +9,9 @@
 #import "PHNetworkRequest.h"
 #import "PHPhoenix.h"
 
+@implementation PHNetworkHTTPRequestFileParameter
+@end
+
 @implementation PHNetworkRequest
 
 #pragma mark - Control methods
