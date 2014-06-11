@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="5056" systemVersion="13D65" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="s09-zP-Zm0">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3733"/>
+    </dependencies>
+    <scenes>
+        <!--View Controller-->
+        <scene sceneID="Po2-DC-vJb">
+            <objects>
+                <viewController id="s09-zP-Zm0" customClass="ACViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="eFW-WQ-3Bn"/>
+                        <viewControllerLayoutGuide type="bottom" id="gUq-7D-qRJ"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="IcK-4Y-gwE">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="iZz-ES-Cyi">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                            </imageView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="iZz-ES-Cyi" firstAttribute="top" secondItem="IcK-4Y-gwE" secondAttribute="top" id="GLg-bC-aPB"/>
+                            <constraint firstItem="gUq-7D-qRJ" firstAttribute="top" secondItem="iZz-ES-Cyi" secondAttribute="bottom" id="J8b-eP-rOY"/>
+                            <constraint firstItem="iZz-ES-Cyi" firstAttribute="leading" secondItem="IcK-4Y-gwE" secondAttribute="leading" id="s9d-OQ-LAy"/>
+                            <constraint firstAttribute="trailing" secondItem="iZz-ES-Cyi" secondAttribute="trailing" id="uSA-ML-ftF"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="testImageView" destination="iZz-ES-Cyi" id="P4Y-JV-RSd"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="ZY7-Wo-hGT" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="394" y="124"/>
+        </scene>
+    </scenes>
+    <simulatedMetricsContainer key="defaultSimulatedMetrics">
+        <simulatedStatusBarMetrics key="statusBar"/>
+        <simulatedOrientationMetrics key="orientation"/>
+        <simulatedScreenMetrics key="destination" type="retina4"/>
+    </simulatedMetricsContainer>
+</document>

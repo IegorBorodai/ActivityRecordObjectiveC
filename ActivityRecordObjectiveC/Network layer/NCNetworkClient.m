@@ -52,5 +52,24 @@ static NCNetworkManager *sharedNetworkClient = nil;
 }
 
 
++ (NSURLSessionTask*)downloadImageFromPath:(NSString*)path success:(void (^)(UIImage* image))success
+                                           failure:(void (^)(NSError *error, BOOL isCanceled))failure
+                                          progress:(NSProgress*)progress
+{
+    NSURLSessionTask* downloadTask = [[NCNetworkClient HTTPClient] downloadImageFromPath:path success:success failure:failure progress:progress];
+    return downloadTask;
+}
+
+- (NSURLSessionDownloadTask*)downloadFileFromPath:(NSString*)path
+                                       toFilePath:(NSString*)filePath
+                                          success:(SuccessFileURLBlock)successBlock
+                                          failure:(FailureBlock)failureBlock
+                                         progress:(NSProgress*)progress
+{
+    NSURLSessionDownloadTask* downloadTask = [[NCNetworkClient HTTPClient] downloadFileFromPath:path toFilePath:filePath success:successBlock failure:failureBlock progress:progress];
+    return downloadTask;
+}
+
+
 @end
 

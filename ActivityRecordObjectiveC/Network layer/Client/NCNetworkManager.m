@@ -20,9 +20,13 @@ typedef void (^failBlock)(NSError* error);
 
 
 @property (nonatomic)                   AFNetworkReachabilityStatus           reachabilityStatus;
-@property (nonatomic, strong)           AFHTTPSessionManager                  *sessionManager;
+@property (nonatomic, strong)           AFHTTPSessionManager                  *taskManager;
+@property (nonatomic, strong)           AFHTTPSessionManager                  *downloadManager;
 @property (nonatomic, readwrite)        NSString                              *rootPath;
 @property (nonatomic, readwrite)        NSURL                                 *baseURL;
+
+
+@property (nonatomic, strong)           NCNetworkRequestSerializer            *networkRequestSerializer;
 
 @end
 
@@ -41,15 +45,21 @@ typedef void (^failBlock)(NSError* error);
         taskConfig.timeoutIntervalForRequest = 0;
         taskConfig.allowsCellularAccess = YES;
         taskConfig.HTTPShouldSetCookies = NO;
-
-        NSDictionary* headers = @{@"X-Requested-With" : @"XMLHttpRequest", @"App-Marker":@"hios8dc1c8e1"};
-        taskConfig.HTTPAdditionalHeaders = headers;
         
-        _sessionManager = [[AFHTTPSessionManager alloc] initWithBaseURL:url sessionConfiguration:taskConfig];
+        self.networkRequestSerializer = [NCNetworkRequestSerializer serializer];
         
-        [_sessionManager setRequestSerializer:[NCNetworkRequestSerializer serializer]];
-        [_sessionManager setResponseSerializer:[NCNetworkResponseSerializer serializer]];
+        self.taskManager = [[AFHTTPSessionManager alloc] initWithBaseURL:url sessionConfiguration:taskConfig];
+        [self.taskManager setRequestSerializer:self.networkRequestSerializer];
+        [self.taskManager setResponseSerializer:[NCNetworkResponseSerializer serializer]];
         
+        self.downloadManager = [[AFHTTPSessionManager alloc] initWithBaseURL:url sessionConfiguration:taskConfig];
+        [self.downloadManager setRequestSerializer:self.networkRequestSerializer];
+        
+        AFImageResponseSerializer* serializer = [AFImageResponseSerializer serializer];
+        NSMutableSet* contentWithHTMLMutableSet = [serializer.acceptableContentTypes mutableCopy];
+        [contentWithHTMLMutableSet addObject:@"text/html"];
+        serializer.acceptableContentTypes = contentWithHTMLMutableSet;
+        [self.downloadManager setResponseSerializer:serializer];
         
         __weak typeof(self)weakSelf = self;
         [[AFNetworkReachabilityManager sharedManager] startMonitoring];
@@ -73,7 +83,7 @@ typedef void (^failBlock)(NSError* error);
                     stateText = @"Network is reachable via WiFi";
                     break;
             }
-//            LOG_GENERAL(@"%@", stateText);
+            //            LOG_GENERAL(@"%@", stateText);
 #endif
             
         }];
@@ -82,7 +92,7 @@ typedef void (^failBlock)(NSError* error);
     return self;
 }
 
-    
+
 -(void)dealloc
 {
     [[AFNetworkReachabilityManager sharedManager] stopMonitoring];
@@ -110,131 +120,179 @@ typedef void (^failBlock)(NSError* error);
 #pragma mark - Operation cycle
 
 - (NSURLSessionTask*)enqueueTaskWithNetworkRequest:(NCNetworkRequest*)networkRequest
-                                                success:(SuccessBlock)successBlock
-                                                failure:(FailureBlock)failureBlock
-                                               progress:(NSProgress*)progress
+                                           success:(SuccessBlock)successBlock
+                                           failure:(FailureBlock)failureBlock
+                                          progress:(NSProgress*)progress
 {
-   __block  NSError             *error = nil;
+    __block  NSError             *error = nil;
     NSURLSessionTask            *task = nil;
+    
     BOOL isInternetEnabled = [self checkReachabilityStatusWithError:&error];
     
     if (isInternetEnabled) {
-    
-    NSMutableURLRequest *request = [((NCNetworkRequestSerializer*)self.sessionManager.requestSerializer) serializeRequestFromNetworkRequest:networkRequest error:&error];
-    
-    if (error) {
+        
+        NSMutableURLRequest *request = [self.networkRequestSerializer serializeRequestFromNetworkRequest:networkRequest error:&error];
+        
+        if (error) {
+            failureBlock(error, NO);
+        }
+        
+        void (^SuccessOperationBlock)(NSURLSessionTask *task, id responseObject) = ^(NSURLSessionTask *task, id responseObject) {
+            
+            //            LOG_NETWORK(@"Response <<< : %li \n%@\n%@", (long)weakself.requestNumber, [NSString stringWithString:[weakself.urlRequest.URL absoluteString]], [[NSString alloc] initWithData:responseObject encoding: NSUTF8StringEncoding]);
+            BOOL success = NO;
+            success = [networkRequest parseJSON:responseObject error:&error];
+            
+            if (success)
+            {
+                if (successBlock) {
+                    successBlock(task);
+                }
+            }
+            else
+            {
+                if (failureBlock) {
+                    networkRequest.error = error;
+                    failureBlock(networkRequest.error, NO);
+                }
+            }
+        };
+        
+        void (^FailureOperationBlock)(NSURLSessionTask *task, NSError *error) = ^(NSURLSessionTask *task, NSError *error){
+            BOOL requestCanceled = NO;
+            
+            if (error.code == 500 || error.code == 404 || error.code == -1011)
+            {
+//                NSString* path = [task.currentRequest.URL path];
+                //            LOG_NETWORK(@"STATUS: request %@ failed with error: %@", path, [error localizedDescription]);
+                networkRequest.error = [NSError errorWithDomain:error.domain
+                                                           code:error.code
+                                                       userInfo:@{NSLocalizedDescriptionKey: @"serverIsOnMaintenance"}];
+            }
+            else if (error.code == NSURLErrorCancelled)
+            {
+                networkRequest.error = error;
+                requestCanceled = YES;
+            }
+            else
+            {
+                networkRequest.error = error;
+            }
+            
+            if (failureBlock) {
+                failureBlock(networkRequest.error,requestCanceled);
+            }
+        };
+        
+        
+        if ([networkRequest.files count] > 0)
+        {
+            NSProgress *localProgress;
+            task = [self.taskManager uploadTaskWithStreamedRequest:request progress:&progress completionHandler:^(NSURLResponse *response, id responseObject, NSError *error) {
+                if (!error) {
+                    SuccessOperationBlock(task, responseObject);
+                } else {
+                    FailureOperationBlock(task, error);
+                }
+            }];
+            progress = localProgress;
+        } else {
+            task = [self.taskManager dataTaskWithRequest:request completionHandler:^(NSURLResponse *response, id responseObject, NSError *error) {
+                if (!error) {
+                    SuccessOperationBlock(task, responseObject);
+                } else {
+                    FailureOperationBlock(task, error);
+                }
+            }];
+        }
+        
+        [task resume];
+        
+    } else if (failureBlock) {
         failureBlock(error, NO);
     }
     
-    void (^SuccessOperationBlock)(NSURLSessionTask *task, id responseObject) = ^(NSURLSessionTask *task, id responseObject) {
-        
-//        if (![weakSelf.networkRequest isKindOfClass:[PHImageDownloadRequest class]]) {
-//            LOG_NETWORK(@"Response <<< : %li \n%@\n%@", (long)weakself.requestNumber, [NSString stringWithString:[weakself.urlRequest.URL absoluteString]], [[NSString alloc] initWithData:responseObject encoding: NSUTF8StringEncoding]);
-//        }
-        BOOL success = NO;
-//        if ([networkRequest isKindOfClass:[PHImageDownloadRequest class]]) {
-//            success = [networkRequest parseJSON:responseObject error:&error];
-//        } else {
-            success = [networkRequest parseJSON:responseObject error:&error];
-//        }
-        
-        if (success)
-        {
-            if (successBlock) {
-                successBlock(task);
-            }
-        }
-        else
-        {
-            if (failureBlock) {
-                networkRequest.error = error;
-                failureBlock(networkRequest.error, NO);
-            }
-        }
-    };
-    
-    void (^FailureOperationBlock)(NSURLSessionTask *task, NSError *error) = ^(id operation, NSError *error){
-        BOOL requestCanceled = NO;
-        
-        if (error.code == 500 || error.code == 404 || error.code == -1011)
-        {
-            NSString* path = @"";
-            if ([operation isKindOfClass:[NSURLResponse class]]) {
-                path = [((NSURLResponse*)operation).URL path];
-            } else {
-                path = [((AFHTTPRequestOperation*)operation).request.URL path];
-            }
-//            LOG_NETWORK(@"STATUS: request %@ failed with error: %@", path, [error localizedDescription]);
-            networkRequest.error = [NSError errorWithDomain:error.domain
-                                                                code:error.code
-                                                            userInfo:@{NSLocalizedDescriptionKey: @"serverIsOnMaintenance"}];
-        }
-        else if (error.code == NSURLErrorCancelled)
-        {
-            networkRequest.error = error;
-            requestCanceled = YES;
-        }
-        else
-        {
-            networkRequest.error = error;
-        }
-        
-        if (failureBlock) {
-            failureBlock(networkRequest.error,requestCanceled);
-        }
-    };
+    return task;
+}
 
+
+- (NSURLSessionTask*)downloadImageFromPath:(NSString*)path
+                                           success:(SuccessImageBlock)successBlock
+                                           failure:(FailureBlock)failureBlock
+                                          progress:(NSProgress*)progress
+{
+    NSError                     *error        = nil;
+    NSURLSessionTask            *downloadTask = nil;
+    NSProgress                  *localProgress;
     
-    if ([networkRequest.files count] > 0)
-    {
-        NSProgress *localProgress;
-        task = [self.sessionManager uploadTaskWithStreamedRequest:request progress:&progress completionHandler:^(NSURLResponse *response, id responseObject, NSError *error) {
-            if (!error) {
-                SuccessOperationBlock(task, responseObject);
-            } else {
-                FailureOperationBlock(task, error);
-            }
+    BOOL isInternetEnabled = [self checkReachabilityStatusWithError:&error];
+    
+    if (isInternetEnabled) {
+        
+        downloadTask = [self.downloadManager GET:path parameters:nil success:^(NSURLSessionDataTask *task, UIImage* image) {
+            successBlock(image);
+        } failure:^(NSURLSessionDataTask *task, NSError *error) {
+            failureBlock(error, NO);
         }];
-        progress = localProgress;
-    } else if ([networkRequest isKindOfClass:[PHImageDownloadRequest class]]) {
-        NSProgress* localProgress;
-        task = [self.sessionManager downloadTaskWithRequest:request progress:&progress destination:^NSURL *(NSURL *targetPath, NSURLResponse *response) {
+        
+        //        progress = localProgress;
+        
+        [downloadTask resume];
+        
+    } else if (failureBlock) {
+        failureBlock(error, NO);
+    }
+    
+    return downloadTask;
+}
+
+
+- (NSURLSessionDownloadTask*)downloadFileFromPath:(NSString*)path
+                                       toFilePath:(NSString*)filePath
+                                          success:(SuccessFileURLBlock)successBlock
+                                          failure:(FailureBlock)failureBlock
+                                         progress:(NSProgress*)progress
+{
+    __block NSError             *error        = nil;
+    NSURLSessionDownloadTask    *downloadTask = nil;
+    NSProgress                  *localProgress;
+    
+    BOOL isInternetEnabled = [self checkReachabilityStatusWithError:&error];
+    
+    if (isInternetEnabled) {
+        NSMutableURLRequest* request = [self.networkRequestSerializer serializeRequestForDownloadingPath:path error:&error];
+        if (error) {
+            failureBlock(error, NO);
+        }
+        downloadTask = [self.downloadManager downloadTaskWithRequest:request progress:&progress destination:^NSURL *(NSURL *targetPath, NSURLResponse *response) {
+            NSString* localFilePath = nil;
+            if(!filePath) {
+                NSString *documentsPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
+                localFilePath = [documentsPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@", [[[targetPath path] componentsSeparatedByString:@"/"] lastObject]]];
+            }
             NSFileManager *fileManager = [NSFileManager defaultManager];
-            NSString *documentsPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
-            NSString* path = [documentsPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@", [[[targetPath path] componentsSeparatedByString:@"/"] lastObject]]];
-            NSError* error = nil;
-            [fileManager moveItemAtPath:[targetPath path] toPath:path error:&error];
+            [fileManager moveItemAtPath:[targetPath path] toPath:filePath?:localFilePath error:&error];
             
             if (error) {
-//                LOG_GENERAL(@"FILE MOVE ERROR = %@", error.localizedDescription);
+                //                LOG_GENERAL(@"FILE MOVE ERROR = %@", error.localizedDescription);
             }
             return [NSURL fileURLWithPath:path];
         } completionHandler:^(NSURLResponse *response, NSURL *filePath, NSError *error) {
             if (!error) {
-                SuccessOperationBlock(task, filePath);
+                    successBlock(filePath);
             } else {
-                FailureOperationBlock(task, error);
+                failureBlock(error, NO);
             }
         }];
-        progress = localProgress;
-    } else {
-        task = [self.sessionManager dataTaskWithRequest:request completionHandler:^(NSURLResponse *response, id responseObject, NSError *error) {
-            if (!error) {
-                SuccessOperationBlock(task, responseObject);
-            } else {
-                FailureOperationBlock(task, error);
-            }
-        }];
+
+        [downloadTask resume];
+        
+    } else if (failureBlock) {
+        failureBlock(error, NO);
     }
     
-        [task resume];
-    } else {
-        if (failureBlock) {
-            failureBlock(error, NO);
-        }
-    };
+    return downloadTask;
     
-    return task;
 }
 
 @end

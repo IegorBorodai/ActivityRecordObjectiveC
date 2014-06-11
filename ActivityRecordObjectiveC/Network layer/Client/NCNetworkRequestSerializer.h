@@ -11,5 +11,6 @@
 @interface NCNetworkRequestSerializer : AFHTTPRequestSerializer <AFURLRequestSerialization>
 
 -(NSMutableURLRequest *)serializeRequestFromNetworkRequest:(NCNetworkRequest*)networkRequest error:(NSError* __autoreleasing*)error;
+-(NSMutableURLRequest *)serializeRequestForDownloadingPath:(NSString*)path error:(NSError* __autoreleasing*)error;
 
 @end

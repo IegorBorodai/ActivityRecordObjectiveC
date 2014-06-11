@@ -17,10 +17,10 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+//    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     // Override point for customization after application launch.
-    self.window.backgroundColor = [UIColor whiteColor];
-    [self.window makeKeyAndVisible];
+//    self.window.backgroundColor = [UIColor whiteColor];
+//    [self.window makeKeyAndVisible];
     [NCNetworkClient initHTTPClientWithRootPath:@"https://www.matureaffection.com"];
     [[NCNetworkClient HTTPClient] addObserver:self forKeyPath:@"reachabilityStatus" options:NSKeyValueObservingOptionNew context:NULL];
     
@@ -32,11 +32,11 @@
                         change:(NSDictionary *)change
                        context:(void *)context
 {
-    [NCNetworkClient getGenderInfoWithSuccessBlock:^(NSDictionary *genderAttributes) {
-        NSLog([genderAttributes description]);
-    } failure:^(NSError *error, BOOL isCanceled) {
-        NSLog([error localizedDescription]);
-    }];
+//    [NCNetworkClient getGenderInfoWithSuccessBlock:^(NSDictionary *genderAttributes) {
+//        NSLog([genderAttributes description]);
+//    } failure:^(NSError *error, BOOL isCanceled) {
+//        NSLog([error localizedDescription]);
+//    }];
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application

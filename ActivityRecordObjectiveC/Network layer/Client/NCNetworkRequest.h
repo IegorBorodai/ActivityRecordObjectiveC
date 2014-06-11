@@ -21,26 +21,21 @@
 @interface NCNetworkRequest : NSObject
 {
 	NSString*						_path;
-	NSMutableDictionary*			_parameters;
 	NSString*						_method;
+	NSMutableDictionary*			_parameters;
     NSMutableDictionary*            _customHeaders;
-    BOOL                            _autorizationRequired;
-
-    NSError*                        _error;
+//    BOOL                            _autorizationRequired;
 }
 
 @property (readonly, nonatomic)	NSString*                           path;
-@property (readonly, nonatomic)	NSMutableDictionary*                parameters;
 @property (readonly, nonatomic)	NSString*                           method;
-@property (readonly, nonatomic) BOOL                                autorizationRequired;
-@property (readonly, nonatomic) NSMutableArray                      *files;
+@property (readonly, nonatomic)	NSMutableDictionary*                parameters;
 @property (readonly, nonatomic)	NSMutableDictionary*                customHeaders;
+@property (readonly, nonatomic) NSMutableArray                      *files;
 @property (nonatomic, strong)   NSError*                            error;
+//@property (readonly, nonatomic) BOOL                                autorizationRequired;
 
 - (BOOL)prepareAndCheckRequestParameters;
-//- (BOOL)parseResponseSucessfully:(id)responseObject;
 - (BOOL)parseJSON:(id)responseObject error:(NSError* __autoreleasing *)error;
-//- (void)createErrorWithResponseObject:(NSDictionary*)responseObject;
-//- (BOOL)validateJsonErrorObject:(id)object withKey:(NSString*)key;
 
 @end

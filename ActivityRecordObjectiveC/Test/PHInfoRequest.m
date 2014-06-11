@@ -18,7 +18,7 @@
     {
         _path = @"/info";
 		_method = @"GET";
-        _autorizationRequired = NO;
+//        _autorizationRequired = NO;
     }
     return self;
 }

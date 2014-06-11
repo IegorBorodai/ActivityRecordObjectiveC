@@ -9,13 +9,29 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "ActivityRecordObjectiveC/Network layer/Client/NCNetworkManager.m"
-            timestampString = "424095400.17744"
+            filePath = "Pods/AFNetworking/AFNetworking/AFURLConnectionOperation.m"
+            timestampString = "424168337.995438"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "138"
-            endingLineNumber = "138"
-            landmarkName = "-enqueueTaskWithNetworkRequest:success:failure:progress:"
+            startingLineNumber = "509"
+            endingLineNumber = "509"
+            landmarkName = "-cancelConnection"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Pods/AFNetworking/AFNetworking/AFURLSessionManager.m"
+            timestampString = "424168387.763212"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "469"
+            endingLineNumber = "469"
+            landmarkName = "-invalidateSessionCancelingTasks:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

@@ -22,6 +22,18 @@
 
 //Requests
 + (NSURLSessionTask*)getGenderInfoWithSuccessBlock:(void (^)(NSDictionary *genderAttributes))success
-                                             failure:(void (^)(NSError *error, BOOL isCanceled))failure;
+                                           failure:(void (^)(NSError *error, BOOL isCanceled))failure;
+
++ (NSURLSessionTask*)downloadImageFromPath:(NSString*)path
+                                   success:(void (^)(UIImage* image))success
+                                   failure:(void (^)(NSError *error, BOOL isCanceled))failure
+                                  progress:(NSProgress*)progress;
+
+- (NSURLSessionDownloadTask*)downloadFileFromPath:(NSString*)path
+                                       toFilePath:(NSString*)filePath
+                                          success:(SuccessFileURLBlock)successBlock
+                                          failure:(FailureBlock)failureBlock
+                                         progress:(NSProgress*)progress;
+;
 
 @end

@@ -80,4 +80,52 @@
     return request;
 }
 
+
+-(NSMutableURLRequest *)serializeRequestForDownloadingPath:(NSString*)path error:(NSError* __autoreleasing*)error;
+{
+    NSMutableURLRequest *request = nil;
+    __block NSError     *localError = nil;
+    
+    request = [self requestWithMethod:@"GET"
+                            URLString:[[NSURL URLWithString:path relativeToURL:[NCNetworkClient HTTPClient].baseURL] absoluteString]
+                           parameters:nil
+                                error:&localError];
+    
+    if (localError && error != NULL) {
+        //        LOG_NETWORK(@"ERROR: serialize request: %@", [localError localizedDescription]);
+        *error = localError;
+        return request;
+    }
+    
+    return request;
+}
+
+- (NSMutableURLRequest *)requestWithMethod:(NSString *)method
+								 URLString:(NSString *)URLString
+								parameters:(NSDictionary *)parameters
+									 error:(NSError *__autoreleasing *)error {
+	NSMutableURLRequest *request = [super requestWithMethod:method
+												  URLString:URLString
+												 parameters:parameters
+													  error:error];
+    
+    [request setValue:@"XMLHttpRequest" forHTTPHeaderField:@"X-Requested-With"];
+    [request setValue:@"hios8dc1c8e1" forHTTPHeaderField:@"App-Marker"];
+    [request setValue:@"Bearer qrjjo5jrmmh9loq1saha57iu77" forHTTPHeaderField:@"Authorization"];
+    [request setValue:@"application/x-www-form-urlencoded; charset=utf-8" forHTTPHeaderField:@"Content-Type"];
+    
+    return request;
+    
+}
+
+-(NSMutableURLRequest *)multipartFormRequestWithMethod:(NSString *)method URLString:(NSString *)URLString parameters:(NSDictionary *)parameters constructingBodyWithBlock:(void (^)(id<AFMultipartFormData>))block error:(NSError *__autoreleasing *)error
+{
+    NSMutableURLRequest *request = [super multipartFormRequestWithMethod:method URLString:URLString parameters:parameters constructingBodyWithBlock:block error:error];
+    
+    [request setValue:@"XMLHttpRequest" forHTTPHeaderField:@"X-Requested-With"];
+    [request setValue:@"hios8dc1c8e1" forHTTPHeaderField:@"App-Marker"];
+    
+    return request;
+}
+
 @end
