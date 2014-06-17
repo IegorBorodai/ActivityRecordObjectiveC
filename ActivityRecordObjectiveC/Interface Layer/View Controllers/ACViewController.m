@@ -32,12 +32,18 @@
 
 - (void)loadImage
 {
-    [NCNetworkClient downloadImageFromPath:@"https:\/\/www.localsgowild.com\/photo\/primary\/id\/67a529faddb711e39ef5441ea14ed80c?hash=eyJ0eXBlIjoibm9ybWFsIiwic2l6ZSI6IiIsImZvclVzZXJJZCI6ImMwMTA2ZTYwZTU0NDExZTI5ZGYyOTBiMTFjMDVmMGI5IiwidXBkYXRlZE9uIjoiMDAwMC0wMC0wMCAwMDowMDowMCJ9&updatedOn=1400327057" success:^(UIImage *image) {
-        self.testImageView.image = image;
-    } failure:^(NSError *error, BOOL isCanceled) {
-        NSLog([error localizedDescription]);
-    } progress:nil];
-    
+//    [NCNetworkClient downloadImageFromPath:@"https:\/\/www.localsgowild.com\/photo\/primary\/id\/67a529faddb711e39ef5441ea14ed80c?hash=eyJ0eXBlIjoibm9ybWFsIiwic2l6ZSI6IiIsImZvclVzZXJJZCI6ImMwMTA2ZTYwZTU0NDExZTI5ZGYyOTBiMTFjMDVmMGI5IiwidXBkYXRlZE9uIjoiMDAwMC0wMC0wMCAwMDowMDowMCJ9&updatedOn=1400327057" success:^(UIImage *image) {
+//        self.testImageView.image = image;
+//    } failure:^(NSError *error, BOOL isCanceled) {
+//        NSLog([error localizedDescription]);
+//    } progress:nil];
+
+//    [NCNetworkClient downloadFileFromPath:@"https:\/\/www.localsgowild.com\/photo\/primary\/id\/67a529faddb711e39ef5441ea14ed80c?hash=eyJ0eXBlIjoibm9ybWFsIiwic2l6ZSI6IiIsImZvclVzZXJJZCI6ImMwMTA2ZTYwZTU0NDExZTI5ZGYyOTBiMTFjMDVmMGI5IiwidXBkYXRlZE9uIjoiMDAwMC0wMC0wMCAwMDowMDowMCJ9&updatedOn=1400327057" toFilePath:nil success:^(NSURL *fileURL) {
+//        UIImage* image = [UIImage imageWithContentsOfFile:[fileURL path]];
+//        self.testImageView.image = image;
+//    } failure:^(NSError *error, BOOL isCanceled) {
+//        NSLog([error localizedDescription]);
+//    } progress:nil];
 }
 
 - (void)didReceiveMemoryWarning

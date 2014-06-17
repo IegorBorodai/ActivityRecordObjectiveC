@@ -21,8 +21,8 @@
     // Override point for customization after application launch.
 //    self.window.backgroundColor = [UIColor whiteColor];
 //    [self.window makeKeyAndVisible];
-    [NCNetworkClient initHTTPClientWithRootPath:@"https://www.matureaffection.com"];
-    [[NCNetworkClient HTTPClient] addObserver:self forKeyPath:@"reachabilityStatus" options:NSKeyValueObservingOptionNew context:NULL];
+    [NCNetworkClient initNetworkClientWithRootPath:@"https://www.matureaffection.com"];
+    [[NCNetworkClient networkClient] addObserver:self forKeyPath:@"reachabilityStatus" options:NSKeyValueObservingOptionNew context:NULL];
     
     return YES;
 }

@@ -12,10 +12,10 @@
 @interface NCNetworkClient : NSObject
 
 // Public
-+ (void)initHTTPClientWithRootPath:(NSString*)baseURL;
++ (void)initNetworkClientWithRootPath:(NSString*)baseURL;
 
 // Singletons
-+ (NCNetworkManager *)HTTPClient;
++ (NCNetworkManager *)networkClient;
 
 // Network status
 - (BOOL)checkReachabilityStatusWithError:(NSError* __autoreleasing*)error;
@@ -29,11 +29,10 @@
                                    failure:(void (^)(NSError *error, BOOL isCanceled))failure
                                   progress:(NSProgress*)progress;
 
-- (NSURLSessionDownloadTask*)downloadFileFromPath:(NSString*)path
++ (NSURLSessionDownloadTask*)downloadFileFromPath:(NSString*)path
                                        toFilePath:(NSString*)filePath
                                           success:(SuccessFileURLBlock)successBlock
                                           failure:(FailureBlock)failureBlock
-                                         progress:(NSProgress*)progress;
-;
+                                         progress:(NSProgress* __autoreleasing *)progress;
 
 @end

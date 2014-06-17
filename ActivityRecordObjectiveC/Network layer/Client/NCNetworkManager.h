@@ -14,7 +14,6 @@ typedef void (^SuccessImageBlock)(UIImage *image);
 typedef void (^SuccessFileURLBlock)(NSURL *fileURL);
 typedef void (^FailureBlock)(NSError* error, BOOL isCanceled);
 typedef void (^FailureBlockWithOperation)(NSURLSessionTask* task, NSError* error, BOOL isCanceled);
-typedef void (^ProgressBlock)(NSURLSessionTask* task, NSInteger totalBytesWritten, NSInteger totalBytesExpectedToWrite);
 
 @interface NCNetworkManager : NSObject
 
@@ -27,17 +26,63 @@ typedef void (^ProgressBlock)(NSURLSessionTask* task, NSInteger totalBytesWritte
 
 - (NSURLSessionTask*)enqueueTaskWithNetworkRequest:(NCNetworkRequest*)networkRequest
                                            success:(SuccessBlock)successBlock
-                                           failure:(FailureBlock)failureBlock
-                                          progress:(NSProgress*)progress;
+                                           failure:(FailureBlock)failureBlock;
+
+
+#pragma mark - Download data
 
 - (NSURLSessionTask*)downloadImageFromPath:(NSString*)path
-                                           success:(SuccessImageBlock)successBlock
-                                           failure:(FailureBlock)failureBlock
-                                          progress:(NSProgress*)progress;
+                                   success:(SuccessImageBlock)successBlock
+                                   failure:(FailureBlock)failureBlock;
 
 - (NSURLSessionDownloadTask*)downloadFileFromPath:(NSString*)path
-                                toFilePath:(NSString*)filePath
-                                   success:(SuccessFileURLBlock)successBlock
-                                   failure:(FailureBlock)failureBlock
-                                  progress:(NSProgress*)progress;
+                                       toFilePath:(NSString*)filePath
+                                          success:(SuccessFileURLBlock)successBlock
+                                          failure:(FailureBlock)failureBlock
+                                         progress:(NSProgress * __autoreleasing *)progress;
+
+
+#pragma mark - Upload single data
+
+- (NSURLSessionUploadTask*)uploadFileToPath:(NSString*)path
+                                    fileURL:(NSURL*)fileURL
+                                    success:(SuccessBlock)successBlock
+                                    failure:(FailureBlock)failureBlock
+                                   progress:(NSProgress * __autoreleasing *)progress;
+
+- (NSURLSessionUploadTask*)uploadDataToPath:(NSString*)path
+                                    data:(NSData*)data
+                                    success:(SuccessBlock)successBlock
+                                    failure:(FailureBlock)failureBlock
+                                   progress:(NSProgress * __autoreleasing *)progress;
+
+- (NSURLSessionUploadTask*)uploadImageToPath:(NSString*)path
+                                    image:(UIImage*)image
+                                    success:(SuccessBlock)successBlock
+                                    failure:(FailureBlock)failureBlock
+                                   progress:(NSProgress * __autoreleasing *)progress;
+
+
+#pragma mark - Upload multiple data
+
+- (NSURLSessionTask*)uploadDataBlockToPath:(NSString*)path
+                                dataBlocks:(NSArray*)dataBlocks
+                            dataBlockNames:(NSArray*)dataBlockNames
+                                 mimeTypes:(NSArray*)mimeTypes
+                                   success:(SuccessBlock)successBlock
+                                   failure:(FailureBlock)failureBlock;
+
+- (NSURLSessionTask*)uploadImagesToPath:(NSString*)path
+                                 images:(NSArray*)images
+                             imageNames:(NSArray*)imageNames
+                                success:(SuccessBlock)successBlock
+                                failure:(FailureBlock)failureBlock;
+
+- (NSURLSessionUploadTask*)uploadFilesToPath:(NSString*)path
+                                    fileURLs:(NSArray*)fileURLs
+                                    success:(SuccessBlock)successBlock
+                                    failure:(FailureBlock)failureBlock;
+
+
+
 @end

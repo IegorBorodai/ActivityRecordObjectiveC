@@ -122,14 +122,12 @@ typedef void (^failBlock)(NSError* error);
 - (NSURLSessionTask*)enqueueTaskWithNetworkRequest:(NCNetworkRequest*)networkRequest
                                            success:(SuccessBlock)successBlock
                                            failure:(FailureBlock)failureBlock
-                                          progress:(NSProgress*)progress
 {
     __block  NSError             *error = nil;
     NSURLSessionTask            *task = nil;
     
-    BOOL isInternetEnabled = [self checkReachabilityStatusWithError:&error];
     
-    if (isInternetEnabled) {
+    if ([self checkReachabilityStatusWithError:&error]) {
         
         NSMutableURLRequest *request = [self.networkRequestSerializer serializeRequestFromNetworkRequest:networkRequest error:&error];
         
@@ -163,7 +161,7 @@ typedef void (^failBlock)(NSError* error);
             
             if (error.code == 500 || error.code == 404 || error.code == -1011)
             {
-//                NSString* path = [task.currentRequest.URL path];
+                //                NSString* path = [task.currentRequest.URL path];
                 //            LOG_NETWORK(@"STATUS: request %@ failed with error: %@", path, [error localizedDescription]);
                 networkRequest.error = [NSError errorWithDomain:error.domain
                                                            code:error.code
@@ -185,26 +183,13 @@ typedef void (^failBlock)(NSError* error);
         };
         
         
-        if ([networkRequest.files count] > 0)
-        {
-            NSProgress *localProgress;
-            task = [self.taskManager uploadTaskWithStreamedRequest:request progress:&progress completionHandler:^(NSURLResponse *response, id responseObject, NSError *error) {
-                if (!error) {
-                    SuccessOperationBlock(task, responseObject);
-                } else {
-                    FailureOperationBlock(task, error);
-                }
-            }];
-            progress = localProgress;
-        } else {
-            task = [self.taskManager dataTaskWithRequest:request completionHandler:^(NSURLResponse *response, id responseObject, NSError *error) {
-                if (!error) {
-                    SuccessOperationBlock(task, responseObject);
-                } else {
-                    FailureOperationBlock(task, error);
-                }
-            }];
-        }
+        task = [self.taskManager dataTaskWithRequest:request completionHandler:^(NSURLResponse *response, id responseObject, NSError *error) {
+            if (!error) {
+                SuccessOperationBlock(task, responseObject);
+            } else {
+                FailureOperationBlock(task, error);
+            }
+        }];
         
         [task resume];
         
@@ -217,25 +202,19 @@ typedef void (^failBlock)(NSError* error);
 
 
 - (NSURLSessionTask*)downloadImageFromPath:(NSString*)path
-                                           success:(SuccessImageBlock)successBlock
-                                           failure:(FailureBlock)failureBlock
-                                          progress:(NSProgress*)progress
+                                   success:(SuccessImageBlock)successBlock
+                                   failure:(FailureBlock)failureBlock
 {
     NSError                     *error        = nil;
     NSURLSessionTask            *downloadTask = nil;
-    NSProgress                  *localProgress;
     
-    BOOL isInternetEnabled = [self checkReachabilityStatusWithError:&error];
-    
-    if (isInternetEnabled) {
+    if ([self checkReachabilityStatusWithError:&error]) {
         
         downloadTask = [self.downloadManager GET:path parameters:nil success:^(NSURLSessionDataTask *task, UIImage* image) {
             successBlock(image);
         } failure:^(NSURLSessionDataTask *task, NSError *error) {
             failureBlock(error, NO);
         }];
-        
-        //        progress = localProgress;
         
         [downloadTask resume];
         
@@ -251,20 +230,18 @@ typedef void (^failBlock)(NSError* error);
                                        toFilePath:(NSString*)filePath
                                           success:(SuccessFileURLBlock)successBlock
                                           failure:(FailureBlock)failureBlock
-                                         progress:(NSProgress*)progress
+                                         progress:(NSProgress * __autoreleasing *)progress
 {
     __block NSError             *error        = nil;
     NSURLSessionDownloadTask    *downloadTask = nil;
-    NSProgress                  *localProgress;
+    //    NSProgress                  *localProgress;
     
-    BOOL isInternetEnabled = [self checkReachabilityStatusWithError:&error];
-    
-    if (isInternetEnabled) {
+    if ([self checkReachabilityStatusWithError:&error]) {
         NSMutableURLRequest* request = [self.networkRequestSerializer serializeRequestForDownloadingPath:path error:&error];
         if (error) {
             failureBlock(error, NO);
         }
-        downloadTask = [self.downloadManager downloadTaskWithRequest:request progress:&progress destination:^NSURL *(NSURL *targetPath, NSURLResponse *response) {
+        downloadTask = [self.downloadManager downloadTaskWithRequest:request progress:progress destination:^NSURL *(NSURL *targetPath, NSURLResponse *response) {
             NSString* localFilePath = nil;
             if(!filePath) {
                 NSString *documentsPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
@@ -276,23 +253,223 @@ typedef void (^failBlock)(NSError* error);
             if (error) {
                 //                LOG_GENERAL(@"FILE MOVE ERROR = %@", error.localizedDescription);
             }
-            return [NSURL fileURLWithPath:path];
+            return [NSURL fileURLWithPath:filePath?:localFilePath];
         } completionHandler:^(NSURLResponse *response, NSURL *filePath, NSError *error) {
             if (!error) {
-                    successBlock(filePath);
+                successBlock(filePath);
             } else {
                 failureBlock(error, NO);
             }
         }];
-
+        
         [downloadTask resume];
         
     } else if (failureBlock) {
+#warning Add 500 & other handlers
         failureBlock(error, NO);
     }
     
     return downloadTask;
+}
+
+#pragma mark - Upload single data
+
+- (NSURLSessionUploadTask*)uploadFileToPath:(NSString*)path
+                                    fileURL:(NSURL*)fileURL
+                                    success:(SuccessBlock)successBlock
+                                    failure:(FailureBlock)failureBlock
+                                   progress:(NSProgress * __autoreleasing *)progress
+{
+    __block NSError             *error      = nil;
+    NSURLSessionUploadTask      *uploadTask = nil;
     
+    if ([self checkReachabilityStatusWithError:&error]) {
+        if (fileURL) {
+            
+            NSMutableURLRequest* request = [self.networkRequestSerializer serializeRequestForUploadingPath:path error:&error];
+            if (error) {
+                failureBlock(error, NO);
+            }
+            
+            uploadTask = [self.taskManager uploadTaskWithRequest:request fromFile:fileURL progress:progress completionHandler:^(NSURLResponse *response, id responseObject, NSError *error) {
+                if (!error) {
+                    successBlock(uploadTask);
+                } else {
+                    failureBlock(error, NO);
+                }
+            }];
+        } else {
+#warning Add 500 & other handlers
+        }
+    } else if (failureBlock) {
+#warning Add 500 & other handlers
+        failureBlock(error, NO);
+    }
+    
+    return uploadTask;
+}
+
+
+- (NSURLSessionUploadTask*)uploadDataToPath:(NSString*)path
+                                       data:(NSData*)data
+                                    success:(SuccessBlock)successBlock
+                                    failure:(FailureBlock)failureBlock
+                                   progress:(NSProgress * __autoreleasing *)progress
+{
+    __block NSError             *error      = nil;
+    NSURLSessionUploadTask      *uploadTask = nil;
+    
+    if ([self checkReachabilityStatusWithError:&error]) {
+        if (data) {
+            NSMutableURLRequest* request = [self.networkRequestSerializer serializeRequestForUploadingPath:path error:&error];
+            if (error) {
+                failureBlock(error, NO);
+            }
+            
+            uploadTask = [self.taskManager uploadTaskWithRequest:request fromData:data progress:progress completionHandler:^(NSURLResponse *response, id responseObject, NSError *error) {
+                if (!error) {
+                    successBlock(uploadTask);
+                } else {
+                    failureBlock(error, NO);
+                }
+            }];
+        } else
+        {
+#warning Add 500 & other handlers
+        }
+        
+    } else if (failureBlock) {
+#warning Add 500 & other handlers
+        failureBlock(error, NO);
+    }
+    
+    return uploadTask;
+}
+
+- (NSURLSessionUploadTask*)uploadImageToPath:(NSString*)path
+                                       image:(UIImage*)image
+                                     success:(SuccessBlock)successBlock
+                                     failure:(FailureBlock)failureBlock
+                                    progress:(NSProgress * __autoreleasing *)progress
+{
+    __block NSError             *error      = nil;
+    NSURLSessionUploadTask      *uploadTask = nil;
+    NSData                      *imageData  = nil;
+    
+    if ([image isKindOfClass:[UIImage class]]) {
+        if([image hasAlphaChannel])
+        {
+            imageData = UIImagePNGRepresentation(image);
+        }
+        else
+        {
+            imageData = UIImageJPEGRepresentation(image, 1.0f);
+        }
+        
+        uploadTask = [self uploadDataToPath:path data:imageData success:successBlock failure:false progress:progress];
+    } else {
+#warning Add 500 & other handlers
+        failureBlock(error, NO);
+    }
+    
+    return uploadTask;
+}
+
+
+#pragma mark - Upload multiple data
+
+- (NSURLSessionTask*)uploadDataBlockToPath:(NSString*)path
+                                dataBlocks:(NSArray*)dataBlocks
+                            dataBlockNames:(NSArray*)dataBlockNames
+                                 mimeTypes:(NSArray*)mimeTypes
+                                   success:(SuccessBlock)successBlock
+                                   failure:(FailureBlock)failureBlock
+{
+    __block NSError             *error        = nil;
+    NSURLSessionTask            *uploadTask = nil;
+    
+    if ([self checkReachabilityStatusWithError:&error]) {
+        NSMutableURLRequest* request = [self.networkRequestSerializer serializeRequestForUploadingPath:path dataBlocks:dataBlocks dataBlockNames:dataBlockNames mimeTypes:mimeTypes error:&error];
+        
+        if (error) {
+            failureBlock(error, NO);
+        }
+        
+        uploadTask = [self.taskManager dataTaskWithRequest:request completionHandler:^(NSURLResponse *response, id responseObject, NSError *error) {
+            if (!error) {
+                successBlock(uploadTask);
+            } else {
+                failureBlock(error, NO);
+            }
+        }];
+    } else if (failureBlock) {
+#warning Add 500 & other handlers
+        failureBlock(error, NO);
+    }
+    
+    return uploadTask;
+}
+
+- (NSURLSessionTask*)uploadImagesToPath:(NSString*)path
+                                 images:(NSArray*)images
+                             imageNames:(NSArray*)imageNames
+                                success:(SuccessBlock)successBlock
+                                failure:(FailureBlock)failureBlock
+{
+    __block NSError             *error        = nil;
+    NSURLSessionTask            *uploadTask = nil;
+    
+    if ([self checkReachabilityStatusWithError:&error]) {
+        NSMutableURLRequest* request = [self.networkRequestSerializer serializeRequestForUploadingPath:path images:images imagesNames:imageNames error:&error];
+        
+        if (error) {
+            failureBlock(error, NO);
+        }
+        
+        uploadTask = [self.taskManager dataTaskWithRequest:request completionHandler:^(NSURLResponse *response, id responseObject, NSError *error) {
+            if (!error) {
+                successBlock(uploadTask);
+            } else {
+                failureBlock(error, NO);
+            }
+        }];
+    } else if (failureBlock) {
+#warning Add 500 & other handlers
+        failureBlock(error, NO);
+    }
+    
+    return uploadTask;
+}
+
+
+- (NSURLSessionTask*)uploadFilesToPath:(NSString*)path
+                              fileURLs:(NSArray*)fileURLs
+                               success:(SuccessBlock)successBlock
+                               failure:(FailureBlock)failureBlock
+{
+    __block NSError             *error        = nil;
+    NSURLSessionTask            *uploadTask = nil;
+    
+    if ([self checkReachabilityStatusWithError:&error]) {
+        NSMutableURLRequest* request = [self.networkRequestSerializer serializeRequestForUploadingPath:path fileURLs:fileURLs error:&error];
+        
+        if (error) {
+            failureBlock(error, NO);
+        }
+        
+        uploadTask = [self.taskManager dataTaskWithRequest:request completionHandler:^(NSURLResponse *response, id responseObject, NSError *error) {
+            if (!error) {
+                successBlock(uploadTask);
+            } else {
+                failureBlock(error, NO);
+            }
+        }];
+    } else if (failureBlock) {
+#warning Add 500 & other handlers
+        failureBlock(error, NO);
+    }
+    
+    return uploadTask;
 }
 
 @end

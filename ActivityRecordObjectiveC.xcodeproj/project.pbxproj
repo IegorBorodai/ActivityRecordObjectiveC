@@ -28,6 +28,7 @@
 		E573EF5E1947037B00017FE5 /* NCNetworkResponseSerializer.m in Sources */ = {isa = PBXBuildFile; fileRef = E573EF5D1947037B00017FE5 /* NCNetworkResponseSerializer.m */; };
 		E57563BB194749470068251C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E57563BA194749470068251C /* Main.storyboard */; };
 		E57563BF194749B70068251C /* ACViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E57563BE194749B70068251C /* ACViewController.m */; };
+		E5876964194B19D1009C9B21 /* UIImage+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = E5876963194B19D1009C9B21 /* UIImage+Extension.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -69,6 +70,8 @@
 		E57563BA194749470068251C /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		E57563BD194749B70068251C /* ACViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ACViewController.h; path = "View Controllers/ACViewController.h"; sourceTree = "<group>"; };
 		E57563BE194749B70068251C /* ACViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ACViewController.m; path = "View Controllers/ACViewController.m"; sourceTree = "<group>"; };
+		E5876962194B19D1009C9B21 /* UIImage+Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+Extension.h"; sourceTree = "<group>"; };
+		E5876963194B19D1009C9B21 /* UIImage+Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+Extension.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -173,6 +176,8 @@
 		E53BE2611945B5E800BB91F1 /* Client */ = {
 			isa = PBXGroup;
 			children = (
+				E5876962194B19D1009C9B21 /* UIImage+Extension.h */,
+				E5876963194B19D1009C9B21 /* UIImage+Extension.m */,
 				E53BE2621945B5E800BB91F1 /* NCNetworkManager.h */,
 				E53BE2631945B5E800BB91F1 /* NCNetworkManager.m */,
 				E53BE2661945B5E800BB91F1 /* NCNetworkRequest.h */,
@@ -344,6 +349,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E53BE2801945B5E800BB91F1 /* NCNetworkManager.m in Sources */,
+				E5876964194B19D1009C9B21 /* UIImage+Extension.m in Sources */,
 				E53BE2851945B5E800BB91F1 /* NCNetworkClient.m in Sources */,
 				E573EF5E1947037B00017FE5 /* NCNetworkResponseSerializer.m in Sources */,
 				E57563BF194749B70068251C /* ACViewController.m in Sources */,

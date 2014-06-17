@@ -9,7 +9,7 @@
 #ifndef localsgowild_LoggingDefs_h
 #define localsgowild_LoggingDefs_h
 
-#import "LoggerClient.h"
+//#import "LoggerClient.h"
 
 
 //#define CONSOLE_LOG

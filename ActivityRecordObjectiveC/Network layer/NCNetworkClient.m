@@ -9,7 +9,7 @@
 #import "NCNetworkClient.h"
 #import "PHInfoRequest.h"
 
-static dispatch_once_t NetworkToken;
+static dispatch_once_t networkToken;
 static NCNetworkManager *sharedNetworkClient = nil;
 
 @implementation NCNetworkClient
@@ -21,9 +21,9 @@ static NCNetworkManager *sharedNetworkClient = nil;
 
 #pragma mark - Sigleton methods
 
-+ (NCNetworkManager *)HTTPClient
++ (NCNetworkManager *)networkClient
 {
-    dispatch_once(&NetworkToken, ^{
+    dispatch_once(&networkToken, ^{
         sharedNetworkClient = [[NCNetworkManager alloc] initWithBaseURL:nil];
     });
 	
@@ -32,9 +32,9 @@ static NCNetworkManager *sharedNetworkClient = nil;
 
 #pragma mark - Lifecycle
 
-+ (void)initHTTPClientWithRootPath:(NSString*)baseURL
++ (void)initNetworkClientWithRootPath:(NSString*)baseURL;
 {
-    dispatch_once(&NetworkToken, ^{
+    dispatch_once(&networkToken, ^{
         sharedNetworkClient = [[NCNetworkManager alloc] initWithBaseURL:[NSURL URLWithString:baseURL]];
     });
 }
@@ -43,11 +43,11 @@ static NCNetworkManager *sharedNetworkClient = nil;
                                              failure:(void (^)(NSError *error, BOOL isCanceled))failure
 {
     PHInfoRequest * infoRequest = [PHInfoRequest new];
-    NSURLSessionTask* task = [[NCNetworkClient HTTPClient] enqueueTaskWithNetworkRequest:infoRequest success:^(NSURLSessionTask *task) {
+    NSURLSessionTask* task = [[NCNetworkClient networkClient] enqueueTaskWithNetworkRequest:infoRequest success:^(NSURLSessionTask *task) {
         if (success) {
             success(infoRequest.genderAttributes);
         }
-    } failure:failure progress:nil];
+    } failure:failure];
     return task;
 }
 
@@ -56,17 +56,17 @@ static NCNetworkManager *sharedNetworkClient = nil;
                                            failure:(void (^)(NSError *error, BOOL isCanceled))failure
                                           progress:(NSProgress*)progress
 {
-    NSURLSessionTask* downloadTask = [[NCNetworkClient HTTPClient] downloadImageFromPath:path success:success failure:failure progress:progress];
+    NSURLSessionTask* downloadTask = [[NCNetworkClient networkClient] downloadImageFromPath:path success:success failure:failure];
     return downloadTask;
 }
 
-- (NSURLSessionDownloadTask*)downloadFileFromPath:(NSString*)path
++ (NSURLSessionDownloadTask*)downloadFileFromPath:(NSString*)path
                                        toFilePath:(NSString*)filePath
                                           success:(SuccessFileURLBlock)successBlock
                                           failure:(FailureBlock)failureBlock
-                                         progress:(NSProgress*)progress
+                                         progress:(NSProgress* __autoreleasing *)progress
 {
-    NSURLSessionDownloadTask* downloadTask = [[NCNetworkClient HTTPClient] downloadFileFromPath:path toFilePath:filePath success:successBlock failure:failureBlock progress:progress];
+    NSURLSessionDownloadTask* downloadTask = [[NCNetworkClient networkClient] downloadFileFromPath:path toFilePath:filePath success:successBlock failure:failureBlock progress:progress];
     return downloadTask;
 }
 
