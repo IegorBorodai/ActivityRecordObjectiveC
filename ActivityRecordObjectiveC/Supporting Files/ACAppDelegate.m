@@ -32,11 +32,11 @@
                         change:(NSDictionary *)change
                        context:(void *)context
 {
-//    [NCNetworkClient getGenderInfoWithSuccessBlock:^(NSDictionary *genderAttributes) {
-//        NSLog([genderAttributes description]);
-//    } failure:^(NSError *error, BOOL isCanceled) {
-//        NSLog([error localizedDescription]);
-//    }];
+    [NCNetworkClient getGenderInfoWithSuccessBlock:^(NSDictionary *genderAttributes) {
+        NSLog([genderAttributes description]);
+    } failure:^(NSError *error, BOOL isCanceled) {
+        NSLog([error localizedDescription]);
+    }];
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application

@@ -10,7 +10,6 @@
 
 #import "NCNetworkRequestSerializer.h"
 #import "NCNetworkResponseSerializer.h"
-#import "PHImageDownloadRequest.h"
 
 #define MAX_CONCURENT_REQUESTS 100
 
@@ -19,11 +18,11 @@ typedef void (^failBlock)(NSError* error);
 @interface NCNetworkManager ()
 
 
-@property (nonatomic)                   AFNetworkReachabilityStatus           reachabilityStatus;
-@property (nonatomic, strong)           AFHTTPSessionManager                  *taskManager;
-@property (nonatomic, strong)           AFHTTPSessionManager                  *downloadManager;
-@property (nonatomic, readwrite)        NSString                              *rootPath;
-@property (nonatomic, readwrite)        NSURL                                 *baseURL;
+@property (nonatomic)                    AFNetworkReachabilityStatus           reachabilityStatus;
+@property (nonatomic, strong, readwrite) AFHTTPSessionManager                  *manager;
+@property (nonatomic, strong)            AFHTTPSessionManager                  *downloadManager;
+@property (nonatomic, readwrite)         NSString                              *rootPath;
+@property (nonatomic, readwrite)         NSURL                                 *baseURL;
 
 
 @property (nonatomic, strong)           NCNetworkRequestSerializer            *networkRequestSerializer;
@@ -48,18 +47,22 @@ typedef void (^failBlock)(NSError* error);
         
         self.networkRequestSerializer = [NCNetworkRequestSerializer serializer];
         
-        self.taskManager = [[AFHTTPSessionManager alloc] initWithBaseURL:url sessionConfiguration:taskConfig];
-        [self.taskManager setRequestSerializer:self.networkRequestSerializer];
-        [self.taskManager setResponseSerializer:[NCNetworkResponseSerializer serializer]];
+        self.manager = [[AFHTTPSessionManager alloc] initWithBaseURL:url sessionConfiguration:taskConfig];
+        [self.manager setRequestSerializer:self.networkRequestSerializer];
+        NCNetworkResponseSerializer* jsonSerializer = [NCNetworkResponseSerializer serializer];
+        NSMutableSet* contentWithHTMLMutableSet = [jsonSerializer.acceptableContentTypes mutableCopy];
+        [contentWithHTMLMutableSet addObject:@"text/html"];
+        jsonSerializer.acceptableContentTypes = contentWithHTMLMutableSet;
+        [self.manager setResponseSerializer:jsonSerializer];
         
         self.downloadManager = [[AFHTTPSessionManager alloc] initWithBaseURL:url sessionConfiguration:taskConfig];
         [self.downloadManager setRequestSerializer:self.networkRequestSerializer];
         
-        AFImageResponseSerializer* serializer = [AFImageResponseSerializer serializer];
-        NSMutableSet* contentWithHTMLMutableSet = [serializer.acceptableContentTypes mutableCopy];
+        AFImageResponseSerializer* imageSerializer = [AFImageResponseSerializer serializer];
+        contentWithHTMLMutableSet = [imageSerializer.acceptableContentTypes mutableCopy];
         [contentWithHTMLMutableSet addObject:@"text/html"];
-        serializer.acceptableContentTypes = contentWithHTMLMutableSet;
-        [self.downloadManager setResponseSerializer:serializer];
+        imageSerializer.acceptableContentTypes = contentWithHTMLMutableSet;
+        [self.downloadManager setResponseSerializer:imageSerializer];
         
         __weak typeof(self)weakSelf = self;
         [[AFNetworkReachabilityManager sharedManager] startMonitoring];
@@ -119,79 +122,54 @@ typedef void (^failBlock)(NSError* error);
 
 #pragma mark - Operation cycle
 
-- (NSURLSessionTask*)enqueueTaskWithNetworkRequest:(NCNetworkRequest*)networkRequest
-                                           success:(SuccessBlock)successBlock
-                                           failure:(FailureBlock)failureBlock
+
+- (NSURLSessionTask*)enqueueTaskWithMethod:(NSString*)method
+                                      path:(NSString*)path
+                                parameters:(NSDictionary*)parameters
+                             customHeaders:(NSDictionary*)customHeaders
+                                   success:(SuccessBlock)successBlock
+                                   failure:(FailureBlock)failureBlock
 {
     __block  NSError             *error = nil;
     NSURLSessionTask            *task = nil;
     
-    
     if ([self checkReachabilityStatusWithError:&error]) {
         
-        NSMutableURLRequest *request = [self.networkRequestSerializer serializeRequestFromNetworkRequest:networkRequest error:&error];
-        
+        NSMutableURLRequest *request = [self.networkRequestSerializer serializeRequestWithMethod:method path:path parameters:parameters customHeaders:customHeaders error:&error];
         if (error) {
             failureBlock(error, NO);
         }
-        
-        void (^SuccessOperationBlock)(NSURLSessionTask *task, id responseObject) = ^(NSURLSessionTask *task, id responseObject) {
-            
-            //            LOG_NETWORK(@"Response <<< : %li \n%@\n%@", (long)weakself.requestNumber, [NSString stringWithString:[weakself.urlRequest.URL absoluteString]], [[NSString alloc] initWithData:responseObject encoding: NSUTF8StringEncoding]);
-            BOOL success = NO;
-            success = [networkRequest parseJSON:responseObject error:&error];
-            
-            if (success)
-            {
-                if (successBlock) {
-                    successBlock(task);
-                }
-            }
-            else
-            {
-                if (failureBlock) {
-                    networkRequest.error = error;
-                    failureBlock(networkRequest.error, NO);
-                }
-            }
-        };
-        
-        void (^FailureOperationBlock)(NSURLSessionTask *task, NSError *error) = ^(NSURLSessionTask *task, NSError *error){
-            BOOL requestCanceled = NO;
-            
-            if (error.code == 500 || error.code == 404 || error.code == -1011)
-            {
-                //                NSString* path = [task.currentRequest.URL path];
-                //            LOG_NETWORK(@"STATUS: request %@ failed with error: %@", path, [error localizedDescription]);
-                networkRequest.error = [NSError errorWithDomain:error.domain
-                                                           code:error.code
-                                                       userInfo:@{NSLocalizedDescriptionKey: @"serverIsOnMaintenance"}];
-            }
-            else if (error.code == NSURLErrorCancelled)
-            {
-                networkRequest.error = error;
-                requestCanceled = YES;
-            }
-            else
-            {
-                networkRequest.error = error;
-            }
-            
-            if (failureBlock) {
-                failureBlock(networkRequest.error,requestCanceled);
-            }
-        };
-        
-        
-        task = [self.taskManager dataTaskWithRequest:request completionHandler:^(NSURLResponse *response, id responseObject, NSError *error) {
+        task = [self.manager dataTaskWithRequest:request completionHandler:^(NSURLResponse *response, id responseObject, NSError *error) {
             if (!error) {
-                SuccessOperationBlock(task, responseObject);
+                //            LOG_NETWORK(@"Response <<< : %li \n%@\n%@", (long)weakself.requestNumber, [NSString stringWithString:[weakself.urlRequest.URL absoluteString]], [[NSString alloc] initWithData:responseObject encoding: NSUTF8StringEncoding]);
+                if (successBlock) {
+                    successBlock(responseObject[@"data"]);
+                }
             } else {
-                FailureOperationBlock(task, error);
+                BOOL requestCanceled = NO;
+                if (error.code == 500 || error.code == 404 || error.code == -1011)
+                {
+                    //                NSString* path = [task.currentRequest.URL path];
+                    //            LOG_NETWORK(@"STATUS: request %@ failed with error: %@", path, [error localizedDescription]);
+                    error = [NSError errorWithDomain:error.domain
+                                                               code:error.code
+                                                           userInfo:@{NSLocalizedDescriptionKey: @"serverIsOnMaintenance"}];
+                }
+                else if (error.code == NSURLErrorCancelled)
+                {
+                    error = error;
+                    requestCanceled = YES;
+                }
+                
+                if (failureBlock) {
+                    failureBlock(error,requestCanceled);
+                }
+
             }
         }];
         
         [task resume];
+        
         
     } else if (failureBlock) {
         failureBlock(error, NO);
@@ -199,6 +177,8 @@ typedef void (^failBlock)(NSError* error);
     
     return task;
 }
+
+#pragma mark - Download data
 
 
 - (NSURLSessionTask*)downloadImageFromPath:(NSString*)path
@@ -291,7 +271,7 @@ typedef void (^failBlock)(NSError* error);
                 failureBlock(error, NO);
             }
             
-            uploadTask = [self.taskManager uploadTaskWithRequest:request fromFile:fileURL progress:progress completionHandler:^(NSURLResponse *response, id responseObject, NSError *error) {
+            uploadTask = [self.manager uploadTaskWithRequest:request fromFile:fileURL progress:progress completionHandler:^(NSURLResponse *response, id responseObject, NSError *error) {
                 if (!error) {
                     successBlock(uploadTask);
                 } else {
@@ -326,7 +306,7 @@ typedef void (^failBlock)(NSError* error);
                 failureBlock(error, NO);
             }
             
-            uploadTask = [self.taskManager uploadTaskWithRequest:request fromData:data progress:progress completionHandler:^(NSURLResponse *response, id responseObject, NSError *error) {
+            uploadTask = [self.manager uploadTaskWithRequest:request fromData:data progress:progress completionHandler:^(NSURLResponse *response, id responseObject, NSError *error) {
                 if (!error) {
                     successBlock(uploadTask);
                 } else {
@@ -357,7 +337,7 @@ typedef void (^failBlock)(NSError* error);
     NSData                      *imageData  = nil;
     
     if ([image isKindOfClass:[UIImage class]]) {
-        if([image hasAlphaChannel])
+        if([self.networkRequestSerializer imageHasAlphaChannel:image])
         {
             imageData = UIImagePNGRepresentation(image);
         }
@@ -395,7 +375,7 @@ typedef void (^failBlock)(NSError* error);
             failureBlock(error, NO);
         }
         
-        uploadTask = [self.taskManager dataTaskWithRequest:request completionHandler:^(NSURLResponse *response, id responseObject, NSError *error) {
+        uploadTask = [self.manager dataTaskWithRequest:request completionHandler:^(NSURLResponse *response, id responseObject, NSError *error) {
             if (!error) {
                 successBlock(uploadTask);
             } else {
@@ -426,7 +406,7 @@ typedef void (^failBlock)(NSError* error);
             failureBlock(error, NO);
         }
         
-        uploadTask = [self.taskManager dataTaskWithRequest:request completionHandler:^(NSURLResponse *response, id responseObject, NSError *error) {
+        uploadTask = [self.manager dataTaskWithRequest:request completionHandler:^(NSURLResponse *response, id responseObject, NSError *error) {
             if (!error) {
                 successBlock(uploadTask);
             } else {
@@ -457,7 +437,7 @@ typedef void (^failBlock)(NSError* error);
             failureBlock(error, NO);
         }
         
-        uploadTask = [self.taskManager dataTaskWithRequest:request completionHandler:^(NSURLResponse *response, id responseObject, NSError *error) {
+        uploadTask = [self.manager dataTaskWithRequest:request completionHandler:^(NSURLResponse *response, id responseObject, NSError *error) {
             if (!error) {
                 successBlock(uploadTask);
             } else {

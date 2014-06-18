@@ -11,30 +11,18 @@
 
 @implementation NCNetworkRequestSerializer
 
-
--(NSMutableURLRequest *)serializeRequestFromNetworkRequest:(NCNetworkRequest*)networkRequest error:(NSError* __autoreleasing*)error
+- (NSMutableURLRequest *)serializeRequestWithMethod:(NSString *)method
+                                               path:(NSString *)path
+                                         parameters:(NSDictionary *)parameters
+                                      customHeaders:(NSDictionary*)customHeaders
+                                              error:(NSError *__autoreleasing *)error
 {
     NSMutableURLRequest *request = nil;
     __block NSError     *localError = nil;
     
-    BOOL passedParametersCheck = [networkRequest prepareAndCheckRequestParameters];
-	
-	if (!passedParametersCheck)
-	{
-		if (!networkRequest.error)
-		{
-			networkRequest.error = [NSError errorWithDomain:@"Internal inconsistency"
-                                                       code:3
-                                                   userInfo:@{NSLocalizedDescriptionKey: @"Parameters didn't pass validation."}];
-		}
-        
-        //        LOG_NETWORK(@"ERROR: serialize request: %@", [localError localizedDescription]);
-        *error = networkRequest.error;
-        return request;
-	}
-    request = [self requestWithMethod:networkRequest.method
-                            URLString:[[NSURL URLWithString:networkRequest.path relativeToURL:[NCNetworkClient networkClient].baseURL] absoluteString]
-                           parameters:networkRequest.parameters
+    request = [self requestWithMethod:method
+                            URLString:[[NSURL URLWithString:path relativeToURL:[NCNetworkClient networkClient].baseURL] absoluteString]
+                           parameters:parameters
                                 error:&localError];
     
     if (localError && error != NULL) {
@@ -42,12 +30,11 @@
         *error = localError;
         return request;
     }
-    
-    for (NSString* key in networkRequest.customHeaders) {
-        [request addValue:networkRequest.customHeaders[key] forHTTPHeaderField:key];
+        
+    for (NSString* key in customHeaders) {
+        [request addValue:customHeaders[key] forHTTPHeaderField:key];
     }
-    
-    
+
     return request;
 }
 
@@ -171,7 +158,7 @@
         NSString   *uti = @"";
         NSData*    imageData = nil;
         if ([image isKindOfClass:[UIImage class]]) {
-            if([image hasAlphaChannel])
+            if([self imageHasAlphaChannel:image])
             {
                 imageData = UIImagePNGRepresentation(image);
                 uti = (NSString*)kUTTypePNG;
@@ -183,7 +170,7 @@
             }
             
             [dataArray addObject:imageData];
-            [mimeTypes addObject:[UIImage mimeTypeForImageUTI: uti]];
+            [mimeTypes addObject:[self mimeTypeForImageUTI: uti]];
         } else {
 #warning Add error for missed image
         }
@@ -257,8 +244,8 @@
     
     [request setValue:@"XMLHttpRequest" forHTTPHeaderField:@"X-Requested-With"];
     [request setValue:@"hios8dc1c8e1" forHTTPHeaderField:@"App-Marker"];
-    [request setValue:@"Bearer qrjjo5jrmmh9loq1saha57iu77" forHTTPHeaderField:@"Authorization"];
-    [request setValue:@"application/x-www-form-urlencoded; charset=utf-8" forHTTPHeaderField:@"Content-Type"];
+//    [request setValue:@"Bearer qrjjo5jrmmh9loq1saha57iu77" forHTTPHeaderField:@"Authorization"];
+//    [request setValue:@"application/x-www-form-urlencoded; charset=utf-8" forHTTPHeaderField:@"Content-Type"];
     
     return request;
     
@@ -280,7 +267,7 @@
 
 - (NSString*)temporaryFileNameForUTI:(NSString*)uti
 {
-	NSString* extension = [UIImage pathExtensionForImageUTI: uti];
+	NSString* extension = [self pathExtensionForImageUTI: uti];
 	
     if([extension isEqualToString:@"jpeg"])
     {
@@ -304,6 +291,66 @@
 	dateString = [formatter stringFromDate:[NSDate date]];
     
 	return dateString;
+}
+
+- (BOOL)imageHasAlphaChannel:(UIImage*)image
+{
+	BOOL imageContainsAlpha = YES;
+	
+	CGImageAlphaInfo alphaInfo = CGImageGetAlphaInfo(image.CGImage);
+	
+	if(alphaInfo == kCGImageAlphaNone)
+	{
+		imageContainsAlpha = NO;
+		
+	} else if(alphaInfo == kCGImageAlphaNoneSkipFirst)
+	{
+		imageContainsAlpha = NO;
+		
+	} else if(alphaInfo == kCGImageAlphaNoneSkipLast)
+	{
+		imageContainsAlpha = NO;
+	}
+	
+	return imageContainsAlpha;
+}
+
+- (NSString*)pathExtensionForImageUTI:(NSString*)uti
+{
+	NSDictionary* utiInfo = (__bridge NSDictionary*)UTTypeCopyDeclaration((__bridge CFStringRef)uti);
+	NSDictionary* tagInfo = utiInfo[(NSString*)kUTTypeTagSpecificationKey];
+	
+    CFRelease((CFDictionaryRef)utiInfo);
+    
+	NSString* extension = tagInfo[(NSString*)kUTTagClassFilenameExtension];
+	
+	if([extension isKindOfClass: [NSArray class]])
+	{
+		NSArray* extensions = (NSArray*)extension;
+		
+		return extensions[0];
+	}
+	
+	return extension;
+}
+
+- (NSString*)mimeTypeForImageUTI:(NSString*)uti
+{
+	NSDictionary* utiInfo = (__bridge NSDictionary*)UTTypeCopyDeclaration((__bridge CFStringRef)uti);
+	NSDictionary* tagInfo = utiInfo[(NSString*)kUTTypeTagSpecificationKey];
+	
+    CFRelease((CFDictionaryRef)utiInfo);
+    
+	NSString* mime = tagInfo[(NSString*)kUTTagClassMIMEType];
+	
+	if([mime isKindOfClass: [NSArray class]])
+	{
+		NSArray* mimes = (NSArray*)mime;
+		
+		return mimes[0];
+	}
+	
+	return mime;
 }
 
 

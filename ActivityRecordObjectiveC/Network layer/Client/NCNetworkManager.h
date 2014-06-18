@@ -6,10 +6,7 @@
 //  Copyright (c) 2014 massinteractiveserviceslimited. All rights reserved.
 //
 
-//#import "PHNetworkOperation.h"
-#import "NCNetworkRequest.h"
-
-typedef void (^SuccessBlock)(NSURLSessionTask *task);
+typedef void (^SuccessBlock)(id jsonResponse);
 typedef void (^SuccessImageBlock)(UIImage *image);
 typedef void (^SuccessFileURLBlock)(NSURL *fileURL);
 typedef void (^FailureBlock)(NSError* error, BOOL isCanceled);
@@ -24,9 +21,12 @@ typedef void (^FailureBlockWithOperation)(NSURLSessionTask* task, NSError* error
 
 - (BOOL)checkReachabilityStatusWithError:(NSError* __autoreleasing*)error;
 
-- (NSURLSessionTask*)enqueueTaskWithNetworkRequest:(NCNetworkRequest*)networkRequest
-                                           success:(SuccessBlock)successBlock
-                                           failure:(FailureBlock)failureBlock;
+- (NSURLSessionTask*)enqueueTaskWithMethod:(NSString*)method
+                                      path:(NSString*)path
+                                parameters:(NSDictionary*)parameters
+                             customHeaders:(NSDictionary*)customHeaders
+                                   success:(SuccessBlock)successBlock
+                                   failure:(FailureBlock)failureBlock;
 
 
 #pragma mark - Download data

@@ -7,7 +7,6 @@
 //
 
 #import "NCNetworkClient.h"
-#import "PHInfoRequest.h"
 
 static dispatch_once_t networkToken;
 static NCNetworkManager *sharedNetworkClient = nil;
@@ -42,10 +41,30 @@ static NCNetworkManager *sharedNetworkClient = nil;
 + (NSURLSessionTask*)getGenderInfoWithSuccessBlock:(void (^)(NSDictionary *genderAttributes))success
                                              failure:(void (^)(NSError *error, BOOL isCanceled))failure
 {
-    PHInfoRequest * infoRequest = [PHInfoRequest new];
-    NSURLSessionTask* task = [[NCNetworkClient networkClient] enqueueTaskWithNetworkRequest:infoRequest success:^(NSURLSessionTask *task) {
+    NSURLSessionTask* task = [[NCNetworkClient networkClient] enqueueTaskWithMethod:@"GET" path:@"/info" parameters:@{@"get":@"gender"} customHeaders:nil success:^(id responseObject) {
         if (success) {
-            success(infoRequest.genderAttributes);
+            NSDictionary* genderAttributes = nil;
+            if (responseObject[@"gender"]) {
+                if ([responseObject[@"gender"] isKindOfClass:[NSDictionary class]]) {
+                    genderAttributes = [responseObject[@"gender"] copy];
+                } else if (([responseObject[@"gender"] isKindOfClass:[NSArray class]]) &&
+                           (((NSArray *)responseObject[@"gender"]).count == 2)) {
+                    NSMutableDictionary *genderMut = [NSMutableDictionary new];
+                    
+                    genderMut[@"female"] = [(NSArray *)responseObject[@"gender"] firstObject];
+                    genderMut[@"male"] = [(NSArray *)responseObject[@"gender"] lastObject];
+                    genderAttributes = genderMut;
+                } else if ([responseObject[@"gender"] isKindOfClass:[NSString class]]) {
+                    NSMutableDictionary *genderMut = [NSMutableDictionary new];
+                    genderMut[@"male"] = responseObject[@"gender"];
+                    genderAttributes = genderMut;
+                }
+            }
+            if (genderAttributes) {
+            success(genderAttributes);
+            } else {
+#warning error wrong answer type
+            }
         }
     } failure:failure];
     return task;
