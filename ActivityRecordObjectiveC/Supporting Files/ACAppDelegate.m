@@ -24,6 +24,8 @@
     [NCNetworkClient initNetworkClientWithRootPath:@"https://www.matureaffection.com"];
     [[NCNetworkClient networkClient] addObserver:self forKeyPath:@"reachabilityStatus" options:NSKeyValueObservingOptionNew context:NULL];
     
+    [MagicalRecord setupCoreDataStackWithStoreNamed:@"ActivityRecordObjectiveC"];
+    
     return YES;
 }
 
@@ -32,11 +34,18 @@
                         change:(NSDictionary *)change
                        context:(void *)context
 {
-    [NCNetworkClient getGenderInfoWithSuccessBlock:^(NSDictionary *genderAttributes) {
-        NSLog([genderAttributes description]);
+//    [NCNetworkClient getGenderInfoWithSuccessBlock:^(NSDictionary *genderAttributes) {
+//        NSLog([genderAttributes description]);
+//    } failure:^(NSError *error, BOOL isCanceled) {
+//        NSLog([error localizedDescription]);
+//    }];
+    
+    [NCNetworkClient getGrapUserWithSuccessBlock:^(NSDictionary *genderAttributes) {
+        
     } failure:^(NSError *error, BOOL isCanceled) {
         NSLog([error localizedDescription]);
     }];
+
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application

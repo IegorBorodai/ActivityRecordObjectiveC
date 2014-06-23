@@ -30,9 +30,11 @@
         *error = localError;
         return request;
     }
-        
-    for (NSString* key in customHeaders) {
-        [request addValue:customHeaders[key] forHTTPHeaderField:key];
+    
+    if (customHeaders) {
+        for (NSString* key in customHeaders) {
+            [request addValue:customHeaders[key] forHTTPHeaderField:key];
+        }
     }
 
     return request;
@@ -244,8 +246,8 @@
     
     [request setValue:@"XMLHttpRequest" forHTTPHeaderField:@"X-Requested-With"];
     [request setValue:@"hios8dc1c8e1" forHTTPHeaderField:@"App-Marker"];
-//    [request setValue:@"Bearer qrjjo5jrmmh9loq1saha57iu77" forHTTPHeaderField:@"Authorization"];
-//    [request setValue:@"application/x-www-form-urlencoded; charset=utf-8" forHTTPHeaderField:@"Content-Type"];
+    [request setValue:@"Bearer hsb7nkdnjilqk3mdvuoscekc11" forHTTPHeaderField:@"Authorization"];
+    [request setValue:@"application/x-www-form-urlencoded; charset=utf-8" forHTTPHeaderField:@"Content-Type"];
     
     return request;
     
@@ -257,7 +259,7 @@
     
     [request setValue:@"XMLHttpRequest" forHTTPHeaderField:@"X-Requested-With"];
     [request setValue:@"hios8dc1c8e1" forHTTPHeaderField:@"App-Marker"];
-    [request setValue:@"Bearer qrjjo5jrmmh9loq1saha57iu77" forHTTPHeaderField:@"Authorization"];
+    [request setValue:@"Bearer hsb7nkdnjilqk3mdvuoscekc11" forHTTPHeaderField:@"Authorization"];
     [request setValue:@"application/x-www-form-urlencoded; charset=utf-8" forHTTPHeaderField:@"Content-Type"];
     
     return request;

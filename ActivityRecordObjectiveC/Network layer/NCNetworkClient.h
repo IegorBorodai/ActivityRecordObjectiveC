@@ -24,6 +24,9 @@
 + (NSURLSessionTask*)getGenderInfoWithSuccessBlock:(void (^)(NSDictionary *genderAttributes))success
                                            failure:(void (^)(NSError *error, BOOL isCanceled))failure;
 
++ (NSURLSessionTask*)getGrapUserWithSuccessBlock:(void (^)(NSDictionary *genderAttributes))success
+                                           failure:(void (^)(NSError *error, BOOL isCanceled))failure;
+
 + (NSURLSessionTask*)downloadImageFromPath:(NSString*)path
                                    success:(void (^)(UIImage* image))success
                                    failure:(void (^)(NSError *error, BOOL isCanceled))failure

@@ -7,6 +7,7 @@
 //
 
 #import "NCNetworkClient.h"
+#import "User.h"
 
 static dispatch_once_t networkToken;
 static NCNetworkManager *sharedNetworkClient = nil;
@@ -71,9 +72,51 @@ static NCNetworkManager *sharedNetworkClient = nil;
 }
 
 
++ (NSURLSessionTask*)getGrapUserWithSuccessBlock:(void (^)(NSDictionary *genderAttributes))success
+                                         failure:(void (^)(NSError *error, BOOL isCanceled))failure
+{
+
+    NSDictionary* graphParameters = @{
+                                      @"birthday":@"",
+                                      @"age":@"",
+                                      @"geo":@{
+                                              @"country":@"",
+                                              @"city":@"",
+                                              },
+                                      @"chat_up_line":@"",
+                                      @"children":@"",
+                                      };
+    
+
+    
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:graphParameters
+                                                       options:0
+                                                         error:nil];
+    
+    NSDictionary *parameters = @{@"args":[[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding]};
+    
+    NSURLSessionTask *task = [[NCNetworkClient networkClient] enqueueTaskWithMethod:@"GET" path:@"/data/fetch" parameters:parameters customHeaders:nil success:^(id jsonResponse) {
+        if (success) {
+            User* user = nil;
+            user = [[User findAll] firstObject];
+            if (!user) {
+                user = [[User alloc] initWithJsonDictionary:jsonResponse];
+                NSLog(user.birthday);
+                user.birthday = @"Other date";
+                NSLog(user.birthday);
+                
+                [user save];
+            }
+        }
+    } failure:failure];
+    
+    return task;
+}
+
+
 + (NSURLSessionTask*)downloadImageFromPath:(NSString*)path success:(void (^)(UIImage* image))success
-                                           failure:(void (^)(NSError *error, BOOL isCanceled))failure
-                                          progress:(NSProgress*)progress
+                                   failure:(void (^)(NSError *error, BOOL isCanceled))failure
+                                  progress:(NSProgress*)progress
 {
     NSURLSessionTask* downloadTask = [[NCNetworkClient networkClient] downloadImageFromPath:path success:success failure:failure];
     return downloadTask;
