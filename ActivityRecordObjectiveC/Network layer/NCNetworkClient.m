@@ -14,7 +14,7 @@ static NCNetworkManager *sharedNetworkClient = nil;
 
 @implementation NCNetworkClient
 
-- (BOOL)checkReachabilityStatusWithError:(NSError* __autoreleasing*)error;
+- (BOOL)checkReachabilityStatusWithError:(NSError* __autoreleasing*)error
 {
     return [sharedNetworkClient checkReachabilityStatusWithError:error];
 }
@@ -32,7 +32,7 @@ static NCNetworkManager *sharedNetworkClient = nil;
 
 #pragma mark - Lifecycle
 
-+ (void)initNetworkClientWithRootPath:(NSString*)baseURL;
++ (void)initNetworkClientWithRootPath:(NSString*)baseURL
 {
     dispatch_once(&networkToken, ^{
         sharedNetworkClient = [[NCNetworkManager alloc] initWithBaseURL:[NSURL URLWithString:baseURL]];
@@ -64,7 +64,6 @@ static NCNetworkManager *sharedNetworkClient = nil;
             if (genderAttributes) {
             success(genderAttributes);
             } else {
-#warning error wrong answer type
             }
         }
     } failure:failure];
@@ -101,11 +100,11 @@ static NCNetworkManager *sharedNetworkClient = nil;
             user = [[User findAll] firstObject];
             if (!user) {
                 user = [[User alloc] initWithJsonDictionary:jsonResponse];
-                NSLog(user.birthday);
+                NSLog(@"%@", user.birthday);
                 user.birthday = @"Other date";
-                NSLog(user.birthday);
+                NSLog(@"%@", user.birthday);
                 
-                [user save];
+                [user saveWithCompletionBlock:nil];
             }
         }
     } failure:failure];

@@ -6,8 +6,8 @@
 //  Copyright (c) 2014 Iegor Borodai. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
-#import <CoreData/CoreData.h>
+@import Foundation;
+@import CoreData;
 #import "ACEphemeralObject.h"
 
 

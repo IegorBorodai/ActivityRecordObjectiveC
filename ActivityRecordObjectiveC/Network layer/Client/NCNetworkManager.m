@@ -24,7 +24,6 @@ typedef void (^failBlock)(NSError* error);
 @property (nonatomic, readwrite)         NSString                              *rootPath;
 @property (nonatomic, readwrite)         NSURL                                 *baseURL;
 
-
 @property (nonatomic, strong)           NCNetworkRequestSerializer            *networkRequestSerializer;
 
 @end
@@ -119,6 +118,45 @@ typedef void (^failBlock)(NSError* error);
     return YES;
 }
 
+- (void)checkReachabilityStatusWithCompletion:(void (^)())block failure:(FailureBlock)failureBlock
+{
+    NSError             *error = nil;
+    
+    if ([self checkReachabilityStatusWithError:&error] && block) {
+        block();
+    } else if (failureBlock) {
+        failureBlock(error, NO);
+    }
+}
+
+#pragma mark - Private methods
+
+- (void) handleError:(NSError *)error withFailureBlock:(FailureBlock)failureBlock
+{
+    //                NSString* path = [task.currentRequest.URL path];
+    //            LOG_NETWORK(@"STATUS: request %@ failed with error: %@", path, [error localizedDescription]);
+    NSError* localError = nil;
+    if (failureBlock) {
+        BOOL requestCanceled = NO;
+        if (error.code == 500 || error.code == 404 || error.code == -1011)
+        {
+            localError = [NSError errorWithDomain:error.domain
+                                        code:error.code
+                                    userInfo:@{NSLocalizedDescriptionKey: @"serverIsOnMaintenance"}];
+        }
+        else if (error.code == NSURLErrorCancelled)
+        {
+            requestCanceled = YES;
+        }
+        
+        if (!localError) {
+            localError = error;
+        }
+        
+        failureBlock(localError,requestCanceled);
+    }
+}
+
 
 #pragma mark - Operation cycle
 
@@ -130,50 +168,24 @@ typedef void (^failBlock)(NSError* error);
                                    success:(SuccessBlock)successBlock
                                    failure:(FailureBlock)failureBlock
 {
-    __block  NSError             *error = nil;
-    NSURLSessionTask            *task = nil;
+    __block NSURLSessionTask     *task = nil;
+    __weak typeof(self)weakSelf = self;
     
-    if ([self checkReachabilityStatusWithError:&error]) {
-        
-        NSMutableURLRequest *request = [self.networkRequestSerializer serializeRequestWithMethod:method path:path parameters:parameters customHeaders:customHeaders error:&error];
-        if (error) {
-            failureBlock(error, NO);
-        }
-        task = [self.manager dataTaskWithRequest:request completionHandler:^(NSURLResponse *response, id responseObject, NSError *error) {
+    [self checkReachabilityStatusWithCompletion:^{
+        NSMutableURLRequest *request = [weakSelf.networkRequestSerializer serializeRequestWithMethod:method path:path parameters:parameters customHeaders:customHeaders failure:failureBlock];
+        task = [weakSelf.manager dataTaskWithRequest:request completionHandler:^(NSURLResponse *response, id responseObject, NSError *error) {
             if (!error) {
                 //            LOG_NETWORK(@"Response <<< : %li \n%@\n%@", (long)weakself.requestNumber, [NSString stringWithString:[weakself.urlRequest.URL absoluteString]], [[NSString alloc] initWithData:responseObject encoding: NSUTF8StringEncoding]);
                 if (successBlock) {
                     successBlock(responseObject[@"data"]);
                 }
             } else {
-                BOOL requestCanceled = NO;
-                if (error.code == 500 || error.code == 404 || error.code == -1011)
-                {
-                    //                NSString* path = [task.currentRequest.URL path];
-                    //            LOG_NETWORK(@"STATUS: request %@ failed with error: %@", path, [error localizedDescription]);
-                    error = [NSError errorWithDomain:error.domain
-                                                               code:error.code
-                                                           userInfo:@{NSLocalizedDescriptionKey: @"serverIsOnMaintenance"}];
-                }
-                else if (error.code == NSURLErrorCancelled)
-                {
-                    error = error;
-                    requestCanceled = YES;
-                }
-                
-                if (failureBlock) {
-                    failureBlock(error,requestCanceled);
-                }
-
+                [weakSelf handleError:error withFailureBlock:failureBlock];
             }
         }];
         
         [task resume];
-        
-        
-    } else if (failureBlock) {
-        failureBlock(error, NO);
-    }
+    } failure:failureBlock];
     
     return task;
 }
@@ -185,22 +197,20 @@ typedef void (^failBlock)(NSError* error);
                                    success:(SuccessImageBlock)successBlock
                                    failure:(FailureBlock)failureBlock
 {
-    NSError                     *error        = nil;
-    NSURLSessionTask            *downloadTask = nil;
+    __block NSURLSessionTask            *downloadTask = nil;
+    __weak typeof(self)weakSelf = self;
     
-    if ([self checkReachabilityStatusWithError:&error]) {
+    [self checkReachabilityStatusWithCompletion:^{
         
-        downloadTask = [self.downloadManager GET:path parameters:nil success:^(NSURLSessionDataTask *task, UIImage* image) {
+        downloadTask = [weakSelf.downloadManager GET:path parameters:nil success:^(NSURLSessionDataTask *task, UIImage* image) {
             successBlock(image);
         } failure:^(NSURLSessionDataTask *task, NSError *error) {
-            failureBlock(error, NO);
+            [weakSelf handleError:error withFailureBlock:failureBlock];
         }];
         
         [downloadTask resume];
         
-    } else if (failureBlock) {
-        failureBlock(error, NO);
-    }
+    } failure:failureBlock];
     
     return downloadTask;
 }
@@ -212,25 +222,23 @@ typedef void (^failBlock)(NSError* error);
                                           failure:(FailureBlock)failureBlock
                                          progress:(NSProgress * __autoreleasing *)progress
 {
-    __block NSError             *error        = nil;
-    NSURLSessionDownloadTask    *downloadTask = nil;
+    __block NSURLSessionDownloadTask    *downloadTask = nil;
+    __weak typeof(self)weakSelf = self;
     //    NSProgress                  *localProgress;
     
-    if ([self checkReachabilityStatusWithError:&error]) {
-        NSMutableURLRequest* request = [self.networkRequestSerializer serializeRequestForDownloadingPath:path error:&error];
-        if (error) {
-            failureBlock(error, NO);
-        }
-        downloadTask = [self.downloadManager downloadTaskWithRequest:request progress:progress destination:^NSURL *(NSURL *targetPath, NSURLResponse *response) {
+    [self checkReachabilityStatusWithCompletion:^{
+        NSMutableURLRequest* request = [weakSelf.networkRequestSerializer serializeRequestForDownloadingPath:path failure:failureBlock];
+        downloadTask = [weakSelf.downloadManager downloadTaskWithRequest:request progress:progress destination:^NSURL *(NSURL *targetPath, NSURLResponse *response) {
             NSString* localFilePath = nil;
             if(!filePath) {
                 NSString *documentsPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
                 localFilePath = [documentsPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@", [[[targetPath path] componentsSeparatedByString:@"/"] lastObject]]];
             }
             NSFileManager *fileManager = [NSFileManager defaultManager];
-            [fileManager moveItemAtPath:[targetPath path] toPath:filePath?:localFilePath error:&error];
-            
-            if (error) {
+            NSError* localError = nil;
+            [fileManager moveItemAtPath:[targetPath path] toPath:filePath?:localFilePath error:&localError];
+            if (localError) {
+                failureBlock(localError, NO);
                 //                LOG_GENERAL(@"FILE MOVE ERROR = %@", error.localizedDescription);
             }
             return [NSURL fileURLWithPath:filePath?:localFilePath];
@@ -238,16 +246,13 @@ typedef void (^failBlock)(NSError* error);
             if (!error) {
                 successBlock(filePath);
             } else {
-                failureBlock(error, NO);
+                [weakSelf handleError:error withFailureBlock:failureBlock];
             }
         }];
         
         [downloadTask resume];
         
-    } else if (failureBlock) {
-#warning Add 500 & other handlers
-        failureBlock(error, NO);
-    }
+    } failure:failureBlock];
     
     return downloadTask;
 }
@@ -260,31 +265,26 @@ typedef void (^failBlock)(NSError* error);
                                     failure:(FailureBlock)failureBlock
                                    progress:(NSProgress * __autoreleasing *)progress
 {
-    __block NSError             *error      = nil;
-    NSURLSessionUploadTask      *uploadTask = nil;
+    __block NSURLSessionUploadTask      *uploadTask = nil;
+    __weak typeof(self)weakSelf = self;
     
-    if ([self checkReachabilityStatusWithError:&error]) {
+    [self checkReachabilityStatusWithCompletion:^{
         if (fileURL) {
             
-            NSMutableURLRequest* request = [self.networkRequestSerializer serializeRequestForUploadingPath:path error:&error];
-            if (error) {
-                failureBlock(error, NO);
-            }
+            NSMutableURLRequest* request = [weakSelf.networkRequestSerializer serializeRequestForUploadingPath:path failure:failureBlock];
             
-            uploadTask = [self.manager uploadTaskWithRequest:request fromFile:fileURL progress:progress completionHandler:^(NSURLResponse *response, id responseObject, NSError *error) {
+            uploadTask = [weakSelf.manager uploadTaskWithRequest:request fromFile:fileURL progress:progress completionHandler:^(NSURLResponse *response, id responseObject, NSError *error) {
                 if (!error) {
                     successBlock(uploadTask);
                 } else {
-                    failureBlock(error, NO);
+                    [weakSelf handleError:error withFailureBlock:failureBlock];
                 }
             }];
         } else {
-#warning Add 500 & other handlers
+            NSError* error = [NSError errorWithDomain:@"Serialize" code:5 userInfo:@{NSLocalizedDescriptionKey : @"FileURL can't be empty"}];
+            failureBlock(error, NO);
         }
-    } else if (failureBlock) {
-#warning Add 500 & other handlers
-        failureBlock(error, NO);
-    }
+    } failure:failureBlock];
     
     return uploadTask;
 }
@@ -296,32 +296,25 @@ typedef void (^failBlock)(NSError* error);
                                     failure:(FailureBlock)failureBlock
                                    progress:(NSProgress * __autoreleasing *)progress
 {
-    __block NSError             *error      = nil;
-    NSURLSessionUploadTask      *uploadTask = nil;
+    __block NSURLSessionUploadTask      *uploadTask = nil;
+    __weak typeof(self)weakSelf = self;
     
-    if ([self checkReachabilityStatusWithError:&error]) {
+    [self checkReachabilityStatusWithCompletion:^{
         if (data) {
-            NSMutableURLRequest* request = [self.networkRequestSerializer serializeRequestForUploadingPath:path error:&error];
-            if (error) {
-                failureBlock(error, NO);
-            }
+            NSMutableURLRequest* request = [weakSelf.networkRequestSerializer serializeRequestForUploadingPath:path failure:failureBlock];
             
-            uploadTask = [self.manager uploadTaskWithRequest:request fromData:data progress:progress completionHandler:^(NSURLResponse *response, id responseObject, NSError *error) {
+            uploadTask = [weakSelf.manager uploadTaskWithRequest:request fromData:data progress:progress completionHandler:^(NSURLResponse *response, id responseObject, NSError *error) {
                 if (!error) {
                     successBlock(uploadTask);
                 } else {
                     failureBlock(error, NO);
                 }
             }];
-        } else
-        {
-#warning Add 500 & other handlers
+        } else {
+            NSError* error = [NSError errorWithDomain:@"Serialize" code:3 userInfo:@{NSLocalizedDescriptionKey : @"Data can't be empty"}];
+            failureBlock(error, NO);
         }
-        
-    } else if (failureBlock) {
-#warning Add 500 & other handlers
-        failureBlock(error, NO);
-    }
+    } failure:failureBlock];
     
     return uploadTask;
 }
@@ -332,7 +325,6 @@ typedef void (^failBlock)(NSError* error);
                                      failure:(FailureBlock)failureBlock
                                     progress:(NSProgress * __autoreleasing *)progress
 {
-    __block NSError             *error      = nil;
     NSURLSessionUploadTask      *uploadTask = nil;
     NSData                      *imageData  = nil;
     
@@ -348,7 +340,7 @@ typedef void (^failBlock)(NSError* error);
         
         uploadTask = [self uploadDataToPath:path data:imageData success:successBlock failure:false progress:progress];
     } else {
-#warning Add 500 & other handlers
+        NSError* error = [NSError errorWithDomain:@"Serialize" code:4 userInfo:@{NSLocalizedDescriptionKey : @"Serialize only works with UIImage class objects"}];
         failureBlock(error, NO);
     }
     
@@ -365,27 +357,20 @@ typedef void (^failBlock)(NSError* error);
                                    success:(SuccessBlock)successBlock
                                    failure:(FailureBlock)failureBlock
 {
-    __block NSError             *error        = nil;
-    NSURLSessionTask            *uploadTask = nil;
+    __block NSURLSessionTask    *uploadTask = nil;
+    __weak typeof(self)weakSelf = self;
     
-    if ([self checkReachabilityStatusWithError:&error]) {
-        NSMutableURLRequest* request = [self.networkRequestSerializer serializeRequestForUploadingPath:path dataBlocks:dataBlocks dataBlockNames:dataBlockNames mimeTypes:mimeTypes error:&error];
+    [self checkReachabilityStatusWithCompletion:^{
+        NSMutableURLRequest* request = [weakSelf.networkRequestSerializer serializeRequestForUploadingPath:path dataBlocks:dataBlocks dataBlockNames:dataBlockNames mimeTypes:mimeTypes failure:failureBlock];
         
-        if (error) {
-            failureBlock(error, NO);
-        }
-        
-        uploadTask = [self.manager dataTaskWithRequest:request completionHandler:^(NSURLResponse *response, id responseObject, NSError *error) {
+        uploadTask = [weakSelf.manager dataTaskWithRequest:request completionHandler:^(NSURLResponse *response, id responseObject, NSError *error) {
             if (!error) {
                 successBlock(uploadTask);
             } else {
                 failureBlock(error, NO);
             }
         }];
-    } else if (failureBlock) {
-#warning Add 500 & other handlers
-        failureBlock(error, NO);
-    }
+    } failure:failureBlock];
     
     return uploadTask;
 }
@@ -396,27 +381,20 @@ typedef void (^failBlock)(NSError* error);
                                 success:(SuccessBlock)successBlock
                                 failure:(FailureBlock)failureBlock
 {
-    __block NSError             *error        = nil;
-    NSURLSessionTask            *uploadTask = nil;
+    __block NSURLSessionTask    *uploadTask   = nil;
+    __weak typeof(self)weakSelf = self;
     
-    if ([self checkReachabilityStatusWithError:&error]) {
-        NSMutableURLRequest* request = [self.networkRequestSerializer serializeRequestForUploadingPath:path images:images imagesNames:imageNames error:&error];
+    [self checkReachabilityStatusWithCompletion:^{
+        NSMutableURLRequest* request = [weakSelf.networkRequestSerializer serializeRequestForUploadingPath:path images:images imagesNames:imageNames failure:failureBlock];
         
-        if (error) {
-            failureBlock(error, NO);
-        }
-        
-        uploadTask = [self.manager dataTaskWithRequest:request completionHandler:^(NSURLResponse *response, id responseObject, NSError *error) {
+        uploadTask = [weakSelf.manager dataTaskWithRequest:request completionHandler:^(NSURLResponse *response, id responseObject, NSError *error) {
             if (!error) {
                 successBlock(uploadTask);
             } else {
                 failureBlock(error, NO);
             }
         }];
-    } else if (failureBlock) {
-#warning Add 500 & other handlers
-        failureBlock(error, NO);
-    }
+    } failure:failureBlock];
     
     return uploadTask;
 }
@@ -427,27 +405,20 @@ typedef void (^failBlock)(NSError* error);
                                success:(SuccessBlock)successBlock
                                failure:(FailureBlock)failureBlock
 {
-    __block NSError             *error        = nil;
-    NSURLSessionTask            *uploadTask = nil;
+    __block NSURLSessionTask    *uploadTask   = nil;
+    __weak typeof(self)weakSelf = self;
     
-    if ([self checkReachabilityStatusWithError:&error]) {
-        NSMutableURLRequest* request = [self.networkRequestSerializer serializeRequestForUploadingPath:path fileURLs:fileURLs error:&error];
+    [weakSelf checkReachabilityStatusWithCompletion:^{
+        NSMutableURLRequest* request = [weakSelf.networkRequestSerializer serializeRequestForUploadingPath:path fileURLs:fileURLs failure:failureBlock];
         
-        if (error) {
-            failureBlock(error, NO);
-        }
-        
-        uploadTask = [self.manager dataTaskWithRequest:request completionHandler:^(NSURLResponse *response, id responseObject, NSError *error) {
+        uploadTask = [weakSelf.manager dataTaskWithRequest:request completionHandler:^(NSURLResponse *response, id responseObject, NSError *error) {
             if (!error) {
                 successBlock(uploadTask);
             } else {
                 failureBlock(error, NO);
             }
         }];
-    } else if (failureBlock) {
-#warning Add 500 & other handlers
-        failureBlock(error, NO);
-    }
+    } failure:failureBlock];
     
     return uploadTask;
 }

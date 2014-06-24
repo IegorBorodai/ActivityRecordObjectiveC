@@ -46,9 +46,6 @@
 		E53BE25E1945B5E800BB91F1 /* ActivityRecordObjectiveC.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ActivityRecordObjectiveC.xcdatamodel; sourceTree = "<group>"; };
 		E53BE2621945B5E800BB91F1 /* NCNetworkManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NCNetworkManager.h; sourceTree = "<group>"; };
 		E53BE2631945B5E800BB91F1 /* NCNetworkManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NCNetworkManager.m; sourceTree = "<group>"; };
-		E53BE26B1945B5E800BB91F1 /* LoggingDefs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoggingDefs.h; sourceTree = "<group>"; };
-		E53BE26C1945B5E800BB91F1 /* PHGraphObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PHGraphObject.h; sourceTree = "<group>"; };
-		E53BE26D1945B5E800BB91F1 /* PHGraphObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PHGraphObject.m; sourceTree = "<group>"; };
 		E53BE26F1945B5E800BB91F1 /* NCNetworkClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NCNetworkClient.h; sourceTree = "<group>"; };
 		E53BE2701945B5E800BB91F1 /* NCNetworkClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NCNetworkClient.m; sourceTree = "<group>"; };
 		E53BE2721945B5E800BB91F1 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
@@ -62,8 +59,6 @@
 		E53BE27D1945B5E800BB91F1 /* PHClassTypeConvertor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PHClassTypeConvertor.m; sourceTree = "<group>"; };
 		E53BE2911945EF4E00BB91F1 /* NCNetworkRequestSerializer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NCNetworkRequestSerializer.h; sourceTree = "<group>"; };
 		E53BE2921945EF4E00BB91F1 /* NCNetworkRequestSerializer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NCNetworkRequestSerializer.m; sourceTree = "<group>"; };
-		E53DE7AA1958245600F774D0 /* PHClassTypeConvertor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PHClassTypeConvertor.h; path = "ActivityRecordObjectiveC/Network layer/PHClassTypeConvertor.h"; sourceTree = SOURCE_ROOT; };
-		E53DE7AB1958245600F774D0 /* PHClassTypeConvertor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PHClassTypeConvertor.m; path = "ActivityRecordObjectiveC/Network layer/PHClassTypeConvertor.m"; sourceTree = SOURCE_ROOT; };
 		E573EF5C1947037B00017FE5 /* NCNetworkResponseSerializer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NCNetworkResponseSerializer.h; sourceTree = "<group>"; };
 		E573EF5D1947037B00017FE5 /* NCNetworkResponseSerializer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NCNetworkResponseSerializer.m; sourceTree = "<group>"; };
 		E57563BA194749470068251C /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
@@ -121,7 +116,6 @@
 		E50974931945A9C20043B05C /* ActivityRecordObjectiveC */ = {
 			isa = PBXGroup;
 			children = (
-				E53BE28C1945DF7300BB91F1 /* Test */,
 				E53BE25B1945B5E800BB91F1 /* Category */,
 				E53BE25C1945B5E800BB91F1 /* CoreData Layer */,
 				E53BE25F1945B5E800BB91F1 /* Interface Layer */,
@@ -167,11 +161,6 @@
 			isa = PBXGroup;
 			children = (
 				E53BE2611945B5E800BB91F1 /* Client */,
-				E53BE26B1945B5E800BB91F1 /* LoggingDefs.h */,
-				E53BE26C1945B5E800BB91F1 /* PHGraphObject.h */,
-				E53BE26D1945B5E800BB91F1 /* PHGraphObject.m */,
-				E53DE7AA1958245600F774D0 /* PHClassTypeConvertor.h */,
-				E53DE7AB1958245600F774D0 /* PHClassTypeConvertor.m */,
 				E53BE26F1945B5E800BB91F1 /* NCNetworkClient.h */,
 				E53BE2701945B5E800BB91F1 /* NCNetworkClient.m */,
 			);
@@ -227,13 +216,6 @@
 			children = (
 			);
 			path = Vendor;
-			sourceTree = "<group>";
-		};
-		E53BE28C1945DF7300BB91F1 /* Test */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Test;
 			sourceTree = "<group>";
 		};
 		E57563BC1947499C0068251C /* View Controllers */ = {
@@ -409,6 +391,16 @@
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "";
 				SDKROOT = iphoneos;
+				WARNING_CFLAGS = (
+					"-Weverything",
+					"-Wno-objc-missing-property-synthesis",
+					"-Wno-direct-ivar-access",
+					"-Wno-unused-macros",
+					"-Wno-covered-switch-default",
+					"-Wno-overriding-method-mismatch",
+					"-Wno-assign-enum",
+					"-Wno-switch-enum",
+				);
 			};
 			name = Debug;
 		};
@@ -442,6 +434,16 @@
 				OTHER_LDFLAGS = "";
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
+				WARNING_CFLAGS = (
+					"-Weverything",
+					"-Wno-objc-missing-property-synthesis",
+					"-Wno-direct-ivar-access",
+					"-Wno-unused-macros",
+					"-Wno-covered-switch-default",
+					"-Wno-overriding-method-mismatch",
+					"-Wno-assign-enum",
+					"-Wno-switch-enum",
+				);
 			};
 			name = Release;
 		};

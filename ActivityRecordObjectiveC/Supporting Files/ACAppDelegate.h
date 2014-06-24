@@ -6,7 +6,7 @@
 //  Copyright (c) 2014 Iegor Borodai. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+@import UIKit;
 
 @interface ACAppDelegate : UIResponder <UIApplicationDelegate>
 

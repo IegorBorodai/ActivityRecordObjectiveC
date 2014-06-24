@@ -15,49 +15,35 @@
                                                path:(NSString *)path
                                          parameters:(NSDictionary *)parameters
                                       customHeaders:(NSDictionary*)customHeaders
-                                              error:(NSError *__autoreleasing *)error
+                                            failure:(FailureBlock)failureBlock
 {
     NSMutableURLRequest *request = nil;
-    __block NSError     *localError = nil;
     
     request = [self requestWithMethod:method
                             URLString:[[NSURL URLWithString:path relativeToURL:[NCNetworkClient networkClient].baseURL] absoluteString]
                            parameters:parameters
-                                error:&localError];
-    
-    if (localError && error != NULL) {
-        //        LOG_NETWORK(@"ERROR: serialize request: %@", [localError localizedDescription]);
-        *error = localError;
-        return request;
-    }
+                              failure:failureBlock];
     
     if (customHeaders) {
         for (NSString* key in customHeaders) {
             [request addValue:customHeaders[key] forHTTPHeaderField:key];
         }
     }
-
+    
     return request;
 }
 
 
 #pragma - Download methods
 
--(NSMutableURLRequest *)serializeRequestForDownloadingPath:(NSString*)path error:(NSError* __autoreleasing*)error
+-(NSMutableURLRequest *)serializeRequestForDownloadingPath:(NSString*)path failure:(FailureBlock)failureBlock
 {
     NSMutableURLRequest *request = nil;
-    __block NSError     *localError = nil;
     
     request = [self requestWithMethod:@"GET"
                             URLString:[[NSURL URLWithString:path relativeToURL:[NCNetworkClient networkClient].baseURL] absoluteString]
                            parameters:nil
-                                error:&localError];
-    
-    if (localError && error != NULL) {
-        //        LOG_NETWORK(@"ERROR: serialize request: %@", [localError localizedDescription]);
-        *error = localError;
-        return request;
-    }
+                              failure:failureBlock];
     
     return request;
 }
@@ -65,54 +51,45 @@
 
 #pragma mark - Upload methods
 
--(NSMutableURLRequest *)serializeRequestForUploadingPath:(NSString*)path error:(NSError* __autoreleasing*)error
+-(NSMutableURLRequest *)serializeRequestForUploadingPath:(NSString*)path failure:(FailureBlock)failureBlock
 {
     NSMutableURLRequest *request = nil;
-    __block NSError     *localError = nil;
     
     request = [self requestWithMethod:@"POST"
                             URLString:[[NSURL URLWithString:path relativeToURL:[NCNetworkClient networkClient].baseURL] absoluteString]
                            parameters:nil
-                                error:&localError];
-    
-    if (localError && error != NULL) {
-        //        LOG_NETWORK(@"ERROR: serialize request: %@", [localError localizedDescription]);
-        *error = localError;
-        return request;
-    }
+                              failure:failureBlock];
     
     return request;
 }
 
--(NSMutableURLRequest *)serializeRequestForUploadingPath:(NSString*)path fileURLs:(NSArray*)fileURLs error:(NSError* __autoreleasing*)error
+-(NSMutableURLRequest *)serializeRequestForUploadingPath:(NSString*)path fileURLs:(NSArray*)fileURLs failure:(FailureBlock)failureBlock
 {
     NSMutableURLRequest *request = nil;
-    __block NSError     *localError = nil;
     
     request = [self multipartFormRequestWithMethod:@"POST" URLString:[[NSURL URLWithString:path relativeToURL:[NCNetworkClient networkClient].baseURL] absoluteString] parameters:nil constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
+        NSError* localError = nil;
         for (NSURL* fileURL in fileURLs) {
             [formData appendPartWithFileURL:fileURL name:[fileURL lastPathComponent] error:&localError];
+            if (localError) {
+                //        LOG_NETWORK(@"ERROR: serialize request: %@", [localError localizedDescription]);
+                failureBlock(localError, NO);
+                break;
+            }
         }
-    } error:&localError];
-    
-    if (localError && error != NULL) {
-        //        LOG_NETWORK(@"ERROR: serialize request: %@", [localError localizedDescription]);
-        *error = localError;
-        return request;
-    }
+    } failure:failureBlock];
     
     return request;
 }
 
--(NSMutableURLRequest *)serializeRequestForUploadingPath:(NSString*)path dataBlocks:(NSArray*)dataBlocks dataBlockNames:(NSArray*)dataBlockNames mimeTypes:(NSArray*)mimeTypes error:(NSError* __autoreleasing*)error
+-(NSMutableURLRequest *)serializeRequestForUploadingPath:(NSString*)path dataBlocks:(NSArray*)dataBlocks dataBlockNames:(NSArray*)dataBlockNames mimeTypes:(NSArray*)mimeTypes failure:(FailureBlock)failureBlock
 {
     NSMutableURLRequest *request = nil;
-    __block NSError     *localError = nil;
     __weak typeof(self)weakSelf = self;
     
     if (dataBlocks.count != mimeTypes.count) {
-#warning Add error message
-        
+        NSError* error = [NSError errorWithDomain:@"Serialize" code:0 userInfo:@{NSLocalizedDescriptionKey : @"Data blocks count must be equal to mime types"}];
+        failureBlock(error, NO);
         return request;
     }
     
@@ -120,7 +97,7 @@
         
         NSUInteger count = 0;
         for (NSData* data in dataBlocks) {
-
+            
             NSString   *fileName = @"";
             if (dataBlockNames && (count < dataBlockNames.count)) {
                 fileName = dataBlockNames[count];
@@ -138,21 +115,14 @@
                                     mimeType:mimeTypes[count]];
             ++count;
         }
-    } error:&localError];
-    
-    if (localError && error != NULL) {
-        //        LOG_NETWORK(@"ERROR: serialize request: %@", [localError localizedDescription]);
-        *error = localError;
-        return request;
-    }
+    } failure:failureBlock];
     
     return request;
 }
 
--(NSMutableURLRequest *)serializeRequestForUploadingPath:(NSString*)path images:(NSArray*)images imagesNames:(NSArray*)imagesNames error:(NSError* __autoreleasing*)error
+-(NSMutableURLRequest *)serializeRequestForUploadingPath:(NSString*)path images:(NSArray*)images imagesNames:(NSArray*)imagesNames failure:(FailureBlock)failureBlock
 {
     NSMutableURLRequest *request = nil;
-    __block NSError     *localError = nil;
     NSMutableArray      *dataArray = [NSMutableArray new];
     NSMutableArray      *mimeTypes = [NSMutableArray new];
     
@@ -174,62 +144,14 @@
             [dataArray addObject:imageData];
             [mimeTypes addObject:[self mimeTypeForImageUTI: uti]];
         } else {
-#warning Add error for missed image
+        NSError* error = [NSError errorWithDomain:@"Serialize" code:1 userInfo:@{NSLocalizedDescriptionKey : @"Serialize only works with UIImage class objects"}];
+            failureBlock(error, NO);
         }
     }
     
-    request = [self serializeRequestForUploadingPath:path dataBlocks:dataArray dataBlockNames:imagesNames mimeTypes:mimeTypes error:&localError];
-    
-    if (localError && error != NULL) {
-        //        LOG_NETWORK(@"ERROR: serialize request: %@", [localError localizedDescription]);
-        *error = localError;
-        return request;
-    }
+    request = [self serializeRequestForUploadingPath:path dataBlocks:dataArray dataBlockNames:imagesNames mimeTypes:mimeTypes failure:failureBlock];
     
     return request;
-//
-//    
-//    
-////    __weak typeof(self)weakSelf = self;
-//    
-//    request = [self  multipartFormRequestWithMethod:@"POST" URLString:[[NSURL URLWithString:path relativeToURL:[NCNetworkClient HTTPClient].baseURL] absoluteString] parameters:nil constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
-//        
-//        NSUInteger count = 0;
-//        for (UIImage* image in imagesNames) {
-//            if ([image isKindOfClass:[UIImage class]]) {
-//                NSString   *uti = @"";
-//                NSData*    imageData = nil;
-//                NSString   *fileName = @"";
-//                
-//                if([image hasAlphaChannel])
-//                {
-//                    imageData = UIImagePNGRepresentation(image);
-//                    uti = (NSString*)kUTTypePNG;
-//                }
-//                else
-//                {
-//                    imageData = UIImageJPEGRepresentation(image, 1.0f);
-//                    uti = (NSString*)kUTTypeJPEG;
-//                }
-//                
-//                if (imagesNames && (count < imagesNames.count)) {
-//                    fileName = imagesNames[count];
-//                } else {
-//                    fileName = [weakSelf temporaryFileNameForUTI: uti];
-//                }
-//                
-//                if (imageData) {
-//                    [formData appendPartWithFileData:imageData
-//                                                name:fileName
-//                                            fileName:@"PhotoUploadForm[file]" //fileName
-//                                            mimeType:[UIImage mimeTypeForImageUTI: uti]];
-//                }
-//            }
-//            ++count;
-//        }
-//        
-//    } error:&localError];
-//
 }
 
 
@@ -238,28 +160,43 @@
 - (NSMutableURLRequest *)requestWithMethod:(NSString *)method
 								 URLString:(NSString *)URLString
 								parameters:(NSDictionary *)parameters
-									 error:(NSError *__autoreleasing *)error {
+                                   failure:(FailureBlock)failureBlock {
+    
+    NSError* localError = nil;
 	NSMutableURLRequest *request = [super requestWithMethod:method
 												  URLString:URLString
 												 parameters:parameters
-													  error:error];
+													  error:&localError];
+    
+    if (localError) {
+        //        LOG_NETWORK(@"ERROR: serialize request: %@", [localError localizedDescription]);
+        failureBlock(localError, NO);
+        return request;
+    }
     
     [request setValue:@"XMLHttpRequest" forHTTPHeaderField:@"X-Requested-With"];
     [request setValue:@"hios8dc1c8e1" forHTTPHeaderField:@"App-Marker"];
-    [request setValue:@"Bearer hsb7nkdnjilqk3mdvuoscekc11" forHTTPHeaderField:@"Authorization"];
+    [request setValue:@"Bearer d6b7pji2tmedcspoj38et51am5" forHTTPHeaderField:@"Authorization"];
     [request setValue:@"application/x-www-form-urlencoded; charset=utf-8" forHTTPHeaderField:@"Content-Type"];
     
     return request;
     
 }
 
--(NSMutableURLRequest *)multipartFormRequestWithMethod:(NSString *)method URLString:(NSString *)URLString parameters:(NSDictionary *)parameters constructingBodyWithBlock:(void (^)(id<AFMultipartFormData>))block error:(NSError *__autoreleasing *)error
+-(NSMutableURLRequest *)multipartFormRequestWithMethod:(NSString *)method URLString:(NSString *)URLString parameters:(NSDictionary *)parameters constructingBodyWithBlock:(void (^)(id<AFMultipartFormData>))block failure:(FailureBlock)failureBlock
 {
-    NSMutableURLRequest *request = [super multipartFormRequestWithMethod:method URLString:URLString parameters:parameters constructingBodyWithBlock:block error:error];
+    NSError* localError = nil;
+    
+    NSMutableURLRequest *request = [super multipartFormRequestWithMethod:method URLString:URLString parameters:parameters constructingBodyWithBlock:block error:&localError];
+    
+    if (localError) {
+        failureBlock(localError, NO);
+        return request;
+    }
     
     [request setValue:@"XMLHttpRequest" forHTTPHeaderField:@"X-Requested-With"];
     [request setValue:@"hios8dc1c8e1" forHTTPHeaderField:@"App-Marker"];
-    [request setValue:@"Bearer hsb7nkdnjilqk3mdvuoscekc11" forHTTPHeaderField:@"Authorization"];
+    [request setValue:@"Bearer d6b7pji2tmedcspoj38et51am5" forHTTPHeaderField:@"Authorization"];
     [request setValue:@"application/x-www-form-urlencoded; charset=utf-8" forHTTPHeaderField:@"Content-Type"];
     
     return request;

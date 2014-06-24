@@ -8,9 +8,8 @@
 
 #import "ACEphemeralObject.h"
 @import ObjectiveC.runtime;
-#import "MagicalRecord.h"
 
-// used internally by the category impl
+
 typedef enum _SelectorInferredImplType {
     SelectorInferredImplTypeNone  = 0,
     SelectorInferredImplTypeGet = 1,
@@ -35,7 +34,6 @@ typedef enum _SelectorInferredImplType {
     return self;
 }
 
-
 -(instancetype)initWithJsonDictionary:(NSDictionary *)jsonDictionary
 {
     self = [super init];
@@ -45,6 +43,12 @@ typedef enum _SelectorInferredImplType {
     return self;
 }
 
++ (instancetype)createInMemoryFromJsonDictionary:(NSDictionary *)jsonDictionary
+{
+    ACEphemeralObject* obj = [[ACEphemeralObject alloc] initWithJsonDictionary:jsonDictionary];
+    return obj;
+}
+
 + (instancetype)create
 {
     ACEphemeralObject* obj = [[ACEphemeralObject alloc] init];
@@ -52,43 +56,30 @@ typedef enum _SelectorInferredImplType {
     return obj;
 }
 
-- (void)save
+
+- (void)saveWithCompletionBlock:(void (^)(BOOL success, NSError *error))completion
 {
     if (!self.managedObject && self.jsonDictionary) {
-        NSManagedObjectContext *context = [NSManagedObjectContext MR_contextForCurrentThread];
-        self.managedObject = [[NSManagedObject alloc] initWithEntity:[NSEntityDescription entityForName:NSStringFromClass([self class]) inManagedObjectContext:context] insertIntoManagedObjectContext:context];
-        
-        unsigned count;
-        objc_property_t *properties = class_copyPropertyList([self class], &count);
-        
-        for (NSInteger i = 0; i < count; i++)
-        {
-            objc_property_t property = properties[i];
-            const char *propName = property_getName(property);
-            if(propName) {
-                NSString *name = [NSString stringWithCString:propName
-                                                    encoding:[NSString defaultCStringEncoding]];
-                
-                [self.managedObject setValue:self.jsonDictionary[name] forKeyPath:name];
-                
-            }
-        }
-        
-        free(properties);
+        [self convertInMemoryObjectToManaged];
     }
-    [[self.managedObject managedObjectContext] MR_saveOnlySelfWithCompletion:^(BOOL success, NSError *error) {
-        NSLog(@"All is DONE");
-    }];
+    [[self.managedObject managedObjectContext] MR_saveOnlySelfWithCompletion:completion];
 }
 
 - (void)saveAndWait
 {
-    
+    if (!self.managedObject && self.jsonDictionary) {
+        [self convertInMemoryObjectToManaged];
+    }
+    [[self.managedObject managedObjectContext] MR_saveOnlySelfAndWait];
 }
 
 - (void)delete
 {
-    
+    if (self.managedObject) {
+        [self.managedObject MR_deleteEntity];
+    } else if(self.jsonDictionary) {
+        [self.jsonDictionary removeAllObjects];
+    }
 }
 
 + (NSArray *)findAll
@@ -102,6 +93,28 @@ typedef enum _SelectorInferredImplType {
 
 #pragma mark - Internal methods
 
+- (void)convertInMemoryObjectToManaged
+{
+    NSManagedObjectContext *context = [NSManagedObjectContext MR_contextForCurrentThread];
+    self.managedObject = [[NSManagedObject alloc] initWithEntity:[NSEntityDescription entityForName:NSStringFromClass([self class]) inManagedObjectContext:context] insertIntoManagedObjectContext:context];
+    
+    unsigned count;
+    objc_property_t *properties = class_copyPropertyList([self class], &count);
+    
+    for (NSInteger i = 0; i < count; i++)
+    {
+        objc_property_t property = properties[i];
+        const char *propName = property_getName(property);
+        if(propName) {
+            NSString *name = [NSString stringWithCString:propName
+                                                encoding:[NSString defaultCStringEncoding]];
+            [self.managedObject setValue:self.jsonDictionary[name] forKeyPath:name];
+            
+        }
+    }
+    
+    free(properties);
+}
 
 #pragma mark - Forward invocation
 
@@ -134,7 +147,7 @@ typedef enum _SelectorInferredImplType {
         
         if (self.managedObject) {
             signature = [self.managedObject methodSignatureForSelector:selector];
-        } else {
+        } else if (self.jsonDictionary) {
             switch ([ACEphemeralObject inferredImplTypeForSelector:selector]) {
                 case SelectorInferredImplTypeGet: {
                     signature = [self.jsonDictionary methodSignatureForSelector:@selector(objectForKey:)];
@@ -156,7 +169,7 @@ typedef enum _SelectorInferredImplType {
 - (void)forwardInvocation:(NSInvocation *)invocation {
     if (self.managedObject) {
         [self.managedObject forwardInvocation:invocation];
-    } else {
+    } else if (self.jsonDictionary) {
         switch ([ACEphemeralObject inferredImplTypeForSelector:[invocation selector]]) {
             case SelectorInferredImplTypeGet: {
                 NSString *propertyName = NSStringFromSelector([invocation selector]);
