@@ -20,6 +20,7 @@ typedef enum _SelectorInferredImplType {
 
 @property (nonatomic, strong, readwrite) NSMutableDictionary     *jsonDictionary;
 @property (nonatomic, strong, readwrite) NSManagedObject         *managedObject;
+@property (nonatomic, strong) NSManagedObjectContext             *context;
 
 @end
 
@@ -30,13 +31,14 @@ typedef enum _SelectorInferredImplType {
     self = [super init];
     if (self) {
         self.jsonDictionary = [NSMutableDictionary new];
+        self.context = [NSManagedObjectContext MR_contextForCurrentThread];
     }
     return self;
 }
 
 -(instancetype)initWithJsonDictionary:(NSDictionary *)jsonDictionary
 {
-    self = [super init];
+    self = [self init];
     if (self) {
         self.jsonDictionary = [jsonDictionary mutableCopy];
     }
@@ -60,7 +62,7 @@ typedef enum _SelectorInferredImplType {
 - (void)saveWithCompletionBlock:(void (^)(BOOL success, NSError *error))completion
 {
     if (!self.managedObject && self.jsonDictionary) {
-        [self convertInMemoryObjectToManaged];
+        self.managedObject = [self convertInMemoryObjectToManaged:self.jsonDictionary class:self.class];
     }
     [[self.managedObject managedObjectContext] MR_saveOnlySelfWithCompletion:completion];
 }
@@ -68,7 +70,7 @@ typedef enum _SelectorInferredImplType {
 - (void)saveAndWait
 {
     if (!self.managedObject && self.jsonDictionary) {
-        [self convertInMemoryObjectToManaged];
+        self.managedObject = [self convertInMemoryObjectToManaged:self.jsonDictionary class:self.class];
     }
     [[self.managedObject managedObjectContext] MR_saveOnlySelfAndWait];
 }
@@ -93,27 +95,44 @@ typedef enum _SelectorInferredImplType {
 
 #pragma mark - Internal methods
 
-- (void)convertInMemoryObjectToManaged
+- (Class)getClassFromPropertyAttributes:(objc_property_t)property
 {
-    NSManagedObjectContext *context = [NSManagedObjectContext MR_contextForCurrentThread];
-    self.managedObject = [[NSManagedObject alloc] initWithEntity:[NSEntityDescription entityForName:NSStringFromClass([self class]) inManagedObjectContext:context] insertIntoManagedObjectContext:context];
+    const char *propType = property_getAttributes(property);
+    NSString *propString = [NSString stringWithUTF8String:propType];
+    NSArray *attrArray = [propString componentsSeparatedByString:@","];
+    NSString *classString=[[[attrArray firstObject] stringByReplacingOccurrencesOfString:@"\"" withString:@""] stringByReplacingOccurrencesOfString:@"T@" withString:@""];
+    Class class = objc_getClass([classString UTF8String]);
+    return class;
+}
+
+- (NSManagedObject*)convertInMemoryObjectToManaged:(NSDictionary*)dict class:(Class)class
+{
+    NSManagedObject* obj = [[NSManagedObject alloc] initWithEntity:[NSEntityDescription entityForName:NSStringFromClass(class) inManagedObjectContext:self.context] insertIntoManagedObjectContext:self.context];
     
     unsigned count;
-    objc_property_t *properties = class_copyPropertyList([self class], &count);
+    objc_property_t *properties = class_copyPropertyList(class, &count);
     
-    for (NSInteger i = 0; i < count; i++)
+    for (NSUInteger i = 0; i < count; i++)
     {
         objc_property_t property = properties[i];
         const char *propName = property_getName(property);
         if(propName) {
             NSString *name = [NSString stringWithCString:propName
                                                 encoding:[NSString defaultCStringEncoding]];
-            [self.managedObject setValue:self.jsonDictionary[name] forKeyPath:name];
-            
+            if (dict[name]) {
+                if ([dict[name] isKindOfClass:[NSDictionary class]]) {
+                    Class subClass = [self getClassFromPropertyAttributes:property];
+                    NSManagedObject* subObj = [self convertInMemoryObjectToManaged:dict[name] class:subClass];
+                    [obj setValue:subObj forKeyPath:name];
+                } else {
+                    [obj setValue:dict[name] forKeyPath:name];
+                }
+            }
         }
     }
-    
     free(properties);
+    
+    return obj;
 }
 
 #pragma mark - Forward invocation

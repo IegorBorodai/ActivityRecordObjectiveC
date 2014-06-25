@@ -9,8 +9,7 @@
 @import Foundation;
 @import CoreData;
 #import "ACEphemeralObject.h"
-
-@class Geo;
+#import "Geo.h"
 
 @interface User : ACEphemeralObject
 

@@ -176,7 +176,7 @@
     
     [request setValue:@"XMLHttpRequest" forHTTPHeaderField:@"X-Requested-With"];
     [request setValue:@"hios8dc1c8e1" forHTTPHeaderField:@"App-Marker"];
-    [request setValue:@"Bearer d6b7pji2tmedcspoj38et51am5" forHTTPHeaderField:@"Authorization"];
+    [request setValue:@"Bearer atq0aegd3q49ttpe2ijm4vmrg5" forHTTPHeaderField:@"Authorization"];
     [request setValue:@"application/x-www-form-urlencoded; charset=utf-8" forHTTPHeaderField:@"Content-Type"];
     
     return request;
@@ -196,7 +196,7 @@
     
     [request setValue:@"XMLHttpRequest" forHTTPHeaderField:@"X-Requested-With"];
     [request setValue:@"hios8dc1c8e1" forHTTPHeaderField:@"App-Marker"];
-    [request setValue:@"Bearer d6b7pji2tmedcspoj38et51am5" forHTTPHeaderField:@"Authorization"];
+    [request setValue:@"Bearer atq0aegd3q49ttpe2ijm4vmrg5" forHTTPHeaderField:@"Authorization"];
     [request setValue:@"application/x-www-form-urlencoded; charset=utf-8" forHTTPHeaderField:@"Content-Type"];
     
     return request;

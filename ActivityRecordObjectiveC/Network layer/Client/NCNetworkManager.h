@@ -78,7 +78,7 @@ typedef void (^FailureBlockWithOperation)(NSURLSessionTask* task, NSError* error
                                 success:(SuccessBlock)successBlock
                                 failure:(FailureBlock)failureBlock;
 
-- (NSURLSessionUploadTask*)uploadFilesToPath:(NSString*)path
+- (NSURLSessionTask*)uploadFilesToPath:(NSString*)path
                                     fileURLs:(NSArray*)fileURLs
                                     success:(SuccessBlock)successBlock
                                     failure:(FailureBlock)failureBlock;

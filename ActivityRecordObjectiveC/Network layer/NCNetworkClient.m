@@ -97,15 +97,16 @@ static NCNetworkManager *sharedNetworkClient = nil;
     NSURLSessionTask *task = [[NCNetworkClient networkClient] enqueueTaskWithMethod:@"GET" path:@"/data/fetch" parameters:parameters customHeaders:nil success:^(id jsonResponse) {
         if (success) {
             User* user = nil;
-            user = [[User findAll] firstObject];
+            user = [[User findAll] lastObject];
             if (!user) {
                 user = [[User alloc] initWithJsonDictionary:jsonResponse];
                 NSLog(@"%@", user.birthday);
                 user.birthday = @"Other date";
                 NSLog(@"%@", user.birthday);
-                
+            
                 [user saveWithCompletionBlock:nil];
             }
+            NSLog(@"%@", user.geo.city);
         }
     } failure:failure];
     

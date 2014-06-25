@@ -9,13 +9,29 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "ActivityRecordObjectiveC/Network layer/NCNetworkClient.m"
-            timestampString = "425303791.427362"
+            filePath = "ActivityRecordObjectiveC/CoreData Layer/ACEphemeralObject.m"
+            timestampString = "425382701.330057"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "99"
-            endingLineNumber = "99"
-            landmarkName = "+getGrapUserWithSuccessBlock:failure:"
+            startingLineNumber = "110"
+            endingLineNumber = "110"
+            landmarkName = "-convertInMemoryObjectToManaged:class:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ActivityRecordObjectiveC/CoreData Layer/ACEphemeralObject.m"
+            timestampString = "425393092.501957"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "133"
+            endingLineNumber = "133"
+            landmarkName = "-convertInMemoryObjectToManaged:class:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
