@@ -98,7 +98,7 @@ typedef enum _SelectorInferredImplType {
 - (Class)getClassFromPropertyAttributes:(objc_property_t)property
 {
     const char *propType = property_getAttributes(property);
-    NSString *propString = [NSString stringWithUTF8String:propType];
+    NSString *propString = @(propType);
     NSArray *attrArray = [propString componentsSeparatedByString:@","];
     NSString *classString=[[[attrArray firstObject] stringByReplacingOccurrencesOfString:@"\"" withString:@""] stringByReplacingOccurrencesOfString:@"T@" withString:@""];
     Class class = objc_getClass([classString UTF8String]);

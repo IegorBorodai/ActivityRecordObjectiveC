@@ -32,7 +32,7 @@ typedef void (^failBlock)(NSError* error);
 
 #pragma mark - Lifecycle
 
-- (id)initWithBaseURL:(NSURL*)url
+- (instancetype)initWithBaseURL:(NSURL*)url
 {
     (self = [super init]);
     if (self) {
