@@ -103,10 +103,19 @@ static NCNetworkManager *sharedNetworkClient = nil;
                 NSLog(@"%@", user.birthday);
                 user.birthday = @"Other date";
                 NSLog(@"%@", user.birthday);
-            
-                [user saveWithCompletionBlock:nil];
+                NSLog(@"%@", user.geo.city);
+                
+                [user saveWithCompletionBlock:^(BOOL success, NSError *error) {
+                    User *another = (User *)user.managedObject;
+                    another.birthday = @"New date another";
+                    NSLog(@"%@", another.birthday);
+                    NSLog(@"%@", user.birthday);
+                    user.birthday = @"New date";
+                    NSLog(@"%@", user.birthday);
+                    NSLog(@"%@", user.geo.city);
+
+                }];
             }
-            NSLog(@"%@", user.geo.city);
         }
     } failure:failure];
     

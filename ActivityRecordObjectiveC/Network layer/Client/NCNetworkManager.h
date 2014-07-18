@@ -17,7 +17,7 @@ typedef void (^FailureBlockWithOperation)(NSURLSessionTask* task, NSError* error
 @property (nonatomic, readonly)    NSURL                                 *baseURL;
 @property (nonatomic, readonly)    AFHTTPSessionManager                  *manager;
 
-- (instancetype)initWithBaseURL:(NSURL*)url NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithBaseURL:(NSURL*)url;
 
 - (BOOL)checkReachabilityStatusWithError:(NSError* __autoreleasing*)error;
 

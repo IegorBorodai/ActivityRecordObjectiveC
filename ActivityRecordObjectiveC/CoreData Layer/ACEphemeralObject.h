@@ -16,6 +16,8 @@
 + (instancetype)createInMemoryFromJsonDictionary:(NSDictionary *)jsonDictionary;
 + (instancetype)create;
 
++ (NSManagedObject*)convertInMemoryObjectToManaged:(ACEphemeralObject*)ephemObj class:(Class)class;
+
 - (instancetype)initWithJsonDictionary:(NSDictionary *)jsonDictionary;
 - (void)saveWithCompletionBlock:(void (^)(BOOL success, NSError *error))completion;
 - (void)saveAndWait;
