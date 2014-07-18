@@ -9,14 +9,6 @@
 #import "ACEphemeralObject.h"
 @import ObjectiveC.runtime;
 
-#import "User.h"
-
-#define objc_dynamic_cast(TYPE, object) \
-({ \
-TYPE *dyn_cast_object = (TYPE*)(object); \
-[dyn_cast_object isKindOfClass:[TYPE class]] ? dyn_cast_object : nil; \
-})
-
 typedef enum _SelectorInferredImplType {
     SelectorInferredImplTypeNone  = 0,
     SelectorInferredImplTypeGet = 1,
