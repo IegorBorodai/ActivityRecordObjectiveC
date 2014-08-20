@@ -56,20 +56,21 @@ typedef enum _SelectorInferredImplType {
     return obj;
 }
 
-
-- (void)saveWithCompletionBlock:(void (^)(BOOL success, NSError *error))completion
-{
+- (void)convertToManagedObject {
     if (!self.managedObject && self.jsonDictionary) {
         self.managedObject = [ACEphemeralObject convertInMemoryObjectToManaged:self class:self.class];
     }
+}
+
+- (void)saveWithCompletionBlock:(void (^)(BOOL success, NSError *error))completion
+{
+    [self convertToManagedObject];
     [[self.managedObject managedObjectContext] MR_saveOnlySelfWithCompletion:completion];
 }
 
 - (void)saveAndWait
 {
-    if (!self.managedObject && self.jsonDictionary) {
-        self.managedObject = [ACEphemeralObject convertInMemoryObjectToManaged:self class:self.class];
-    }
+    [self convertToManagedObject];
     [[self.managedObject managedObjectContext] MR_saveOnlySelfAndWait];
 }
 
@@ -117,9 +118,17 @@ typedef enum _SelectorInferredImplType {
     if ([originalObject isKindOfClass:[NSDictionary class]]) {
         result = [ACEphemeralObject createInMemoryFromJsonDictionary:originalObject];
     }
-//    else if ([originalObject isKindOfClass:[NSArray class]]) {
-//        result = [[PHGraphObjectArray alloc] initWrappingArray:originalObject];
-//    }
+    else if ([originalObject isKindOfClass:[NSArray class]]) {
+        NSMutableOrderedSet* orderedSet = [NSMutableOrderedSet new];
+        for (id obj in originalObject) {
+            if ([obj isKindOfClass:[NSDictionary class]]) {
+                [orderedSet addObject:[ACEphemeralObject ephemeralObjectWrappingObject:obj]];
+            } else {
+                [orderedSet addObject:obj];
+            }
+            result = orderedSet;
+        }
+    }
     
     return result;
 }
@@ -155,6 +164,8 @@ typedef enum _SelectorInferredImplType {
                     Class subClass = [self getClassFromPropertyAttributes:property];
                     NSManagedObject* subObj = [self convertInMemoryObjectToManaged:ephemObj.jsonDictionary[name] class:subClass];
                     [obj setValue:subObj forKeyPath:name];
+                } else if ([ephemObj.jsonDictionary[name] isKindOfClass:[NSOrderedSet class]]) {
+                    
                 } else {
                     [obj setValue:ephemObj.jsonDictionary[name] forKeyPath:name];
                 }

@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="5064" systemVersion="13D65" minimumToolsVersion="Automatic" macOSVersion="Automatic" iOSVersion="Automatic">
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="5064" systemVersion="13E28" minimumToolsVersion="Automatic" macOSVersion="Automatic" iOSVersion="Automatic">
     <entity name="Geo" representedClassName="" syncable="YES">
         <attribute name="city" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="country" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="geo" inverseEntity="User" syncable="YES"/>
+    </entity>
+    <entity name="Messages" representedClassName="Messages" syncable="YES">
+        <attribute name="autoreplyDescription" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="autoreplySubject" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="msgType" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="messages" inverseEntity="User" syncable="YES"/>
     </entity>
     <entity name="User" representedClassName="" syncable="YES">
         <attribute name="age" optional="YES" attributeType="String" syncable="YES"/>
@@ -11,9 +17,11 @@
         <attribute name="chat_up_line" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="children" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="geo" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Geo" inverseName="user" inverseEntity="Geo" syncable="YES"/>
+        <relationship name="messages" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="Messages" inverseName="user" inverseEntity="Messages" syncable="YES"/>
     </entity>
     <elements>
         <element name="Geo" positionX="124" positionY="-7" width="128" height="88"/>
-        <element name="User" positionX="-63" positionY="-18" width="128" height="118"/>
+        <element name="User" positionX="-63" positionY="-18" width="128" height="133"/>
+        <element name="Messages" positionX="27" positionY="27" width="128" height="103"/>
     </elements>
 </model>

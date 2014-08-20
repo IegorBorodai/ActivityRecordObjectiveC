@@ -10,11 +10,12 @@
 @import CoreData;
 #import "ACEphemeralObject.h"
 
+@class User;
 
 @interface Geo : ACEphemeralObject
 
 @property (nonatomic, retain) NSString * city;
 @property (nonatomic, retain) NSString * country;
-@property (nonatomic, retain) NSManagedObject *user;
+@property (nonatomic, retain) User *user;
 
 @end

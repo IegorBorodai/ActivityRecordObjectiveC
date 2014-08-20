@@ -22,6 +22,7 @@
 - (void)saveWithCompletionBlock:(void (^)(BOOL success, NSError *error))completion;
 - (void)saveAndWait;
 - (void)delete;
+- (void)convertToManagedObject;
 
 + (NSArray *)findAll;
 

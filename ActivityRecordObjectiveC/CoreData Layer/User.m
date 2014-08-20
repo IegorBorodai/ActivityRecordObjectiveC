@@ -17,5 +17,13 @@
 @dynamic chat_up_line;
 @dynamic children;
 @dynamic geo;
+@dynamic messages;
+
+- (void)addMessagesObject:(Messages *)value {
+    NSMutableOrderedSet* tempSet = [NSMutableOrderedSet orderedSetWithOrderedSet:self.messages];
+    [tempSet addObject:value];
+    self.messages = tempSet;
+}
+
 
 @end
