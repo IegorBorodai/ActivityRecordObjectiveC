@@ -45,13 +45,13 @@ typedef enum _SelectorInferredImplType {
 
 + (instancetype)createInMemoryFromJsonDictionary:(NSDictionary *)jsonDictionary
 {
-    ACEphemeralObject* obj = [[ACEphemeralObject alloc] initWithJsonDictionary:jsonDictionary];
+    ACEphemeralObject* obj = [[self.class alloc] initWithJsonDictionary:jsonDictionary];
     return obj;
 }
 
 + (instancetype)create
 {
-    ACEphemeralObject* obj = [[ACEphemeralObject alloc] init];
+    ACEphemeralObject* obj = [[self.class alloc] init];
     obj.managedObject = [NSManagedObject MR_createEntity];
     return obj;
 }
@@ -59,6 +59,7 @@ typedef enum _SelectorInferredImplType {
 - (void)convertToManagedObject {
     if (!self.managedObject && self.jsonDictionary) {
         self.managedObject = [ACEphemeralObject convertInMemoryObjectToManaged:self class:self.class];
+        self.jsonDictionary = nil;
     }
 }
 

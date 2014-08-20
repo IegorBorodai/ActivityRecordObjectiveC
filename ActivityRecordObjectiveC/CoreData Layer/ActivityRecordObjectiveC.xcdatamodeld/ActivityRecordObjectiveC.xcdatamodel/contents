@@ -5,7 +5,7 @@
         <attribute name="country" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="geo" inverseEntity="User" syncable="YES"/>
     </entity>
-    <entity name="Messages" representedClassName="Messages" syncable="YES">
+    <entity name="Messages" representedClassName="" syncable="YES">
         <attribute name="autoreplyDescription" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="autoreplySubject" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="msgType" optional="YES" attributeType="String" syncable="YES"/>
@@ -21,7 +21,7 @@
     </entity>
     <elements>
         <element name="Geo" positionX="124" positionY="-7" width="128" height="88"/>
-        <element name="User" positionX="-63" positionY="-18" width="128" height="133"/>
         <element name="Messages" positionX="27" positionY="27" width="128" height="103"/>
+        <element name="User" positionX="-63" positionY="-18" width="128" height="133"/>
     </elements>
 </model>
