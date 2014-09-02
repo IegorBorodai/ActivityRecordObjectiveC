@@ -33,6 +33,8 @@ typedef enum _SelectorInferredImplType {
     return self;
 }
 
+#pragma mark - Public methods
+
 -(instancetype)initWithJsonDictionary:(NSDictionary *)jsonDictionary
 {
     self = [self init];
@@ -43,10 +45,13 @@ typedef enum _SelectorInferredImplType {
     return self;
 }
 
-+ (instancetype)createInMemoryFromJsonDictionary:(NSDictionary *)jsonDictionary
+-(instancetype)initWithManagedObject:(NSManagedObject *)managedObject
 {
-    ACEphemeralObject* obj = [[self.class alloc] initWithJsonDictionary:jsonDictionary];
-    return obj;
+    self = [self init];
+    if (self) {
+        self.managedObject = managedObject;
+    }
+    return self;
 }
 
 + (instancetype)create
@@ -66,13 +71,13 @@ typedef enum _SelectorInferredImplType {
 - (void)saveWithCompletionBlock:(void (^)(BOOL success, NSError *error))completion
 {
     [self convertToManagedObject];
-    [[self.managedObject managedObjectContext] MR_saveOnlySelfWithCompletion:completion];
+    [[self.managedObject managedObjectContext] MR_saveToPersistentStoreWithCompletion:completion];
 }
 
 - (void)saveAndWait
 {
     [self convertToManagedObject];
-    [[self.managedObject managedObjectContext] MR_saveOnlySelfAndWait];
+    [[self.managedObject managedObjectContext] MR_saveToPersistentStoreAndWait];
 }
 
 - (void)delete
@@ -84,14 +89,215 @@ typedef enum _SelectorInferredImplType {
     }
 }
 
-+ (NSArray *)findAll
+
++ (NSArray *)findAllWithPredicate:(NSPredicate *)predicate sortDescriptors:(NSArray *)sortDescriptors
 {
     NSManagedObjectContext *context = [NSManagedObjectContext MR_contextForCurrentThread];
     NSFetchRequest *request = [[NSFetchRequest alloc] init];
 	[request setEntity:[NSEntityDescription entityForName:NSStringFromClass([self class]) inManagedObjectContext:context]];
+    if(predicate) {
+        [request setPredicate:predicate];
+    }
+    if(sortDescriptors) {
+        [request setSortDescriptors:sortDescriptors];
+    }
     
-    return [NSManagedObject MR_executeFetchRequest:request inContext:context];
+    NSArray* array = [NSManagedObject MR_executeFetchRequest:request inContext:context];
+    
+    NSMutableArray *ephemeralArray = [[NSMutableArray alloc] initWithCapacity:array.count];
+    for (NSManagedObject *obj in array) {
+        [ephemeralArray addObject:[ACEphemeralObject ephemeralObjectWrappingObject:obj]];
+    }
+    
+    return ephemeralArray;
 }
+
++ (NSArray *)findAllWithPredicate:(NSPredicate *)predicate
+{
+    return [self findAllWithPredicate:predicate sortDescriptors:nil];
+}
+
+
++ (NSArray *)findAllWithSortDescriptors:(NSArray *)sortDescriptors
+{
+    return [self findAllWithPredicate:nil sortDescriptors:sortDescriptors];
+}
+
++ (NSArray *)findAll
+{
+    return [self findAllWithPredicate:nil sortDescriptors:nil];
+}
+
+
+#pragma mark - Merge methods
+
+- (void)mergeWithManagedObject:(NSManagedObject *)managedObj
+{
+    if (self.managedObject) {
+        unsigned count;
+        objc_property_t *properties = class_copyPropertyList(self.class, &count);
+        
+        for (NSUInteger i = 0; i < count; i++)
+        {
+            objc_property_t property = properties[i];
+            const char *propName = property_getName(property);
+            if(propName) {
+                NSString *name = [NSString stringWithCString:propName
+                                                    encoding:[NSString defaultCStringEncoding]];
+                if ([managedObj valueForKey:name]) {
+                    [self.managedObject setValue:[managedObj valueForKey:name] forKey:name];
+                }
+            }
+        }
+    } else if (self.jsonDictionary) {
+        self.managedObject = managedObj;
+        [self mergeWithJsonDictionary:self.jsonDictionary];
+        self.jsonDictionary = nil;
+    } else {
+        self.managedObject = managedObj;
+    }
+}
+
+- (void)mergeWithJsonDictionary:(NSDictionary *)jsonDictionary
+{
+    if (self.managedObject) {
+        [ACEphemeralObject addJsonDictionary:jsonDictionary toManagedObject:self.managedObject class:self.class];
+    } else if (self.jsonDictionary) {
+        for (NSString *key in jsonDictionary) {
+            if ([self.jsonDictionary[key] isKindOfClass:[NSOrderedSet class]] && [jsonDictionary[key] isKindOfClass:[NSOrderedSet class]]) {
+                NSMutableOrderedSet *set = [self.jsonDictionary[key] mutableCopy];
+                [set unionOrderedSet:jsonDictionary[key]];
+                self.jsonDictionary[key] = set;
+            } else {
+                self.jsonDictionary[key] = jsonDictionary[key];
+            }
+        }
+    } else {
+        self.jsonDictionary = [jsonDictionary mutableCopy];
+    }
+}
+
+
+- (void)mergeWithCoreDataByPredicate:(NSPredicate *)predicate
+{
+    NSManagedObjectContext *context = [NSManagedObjectContext MR_contextForCurrentThread];
+    NSFetchRequest *request = [[NSFetchRequest alloc] init];
+	request.entity = [NSEntityDescription entityForName:NSStringFromClass([self class]) inManagedObjectContext:context];
+    request.predicate = predicate;
+    request.fetchLimit = 1;
+    
+    NSArray* result = [NSManagedObject MR_executeFetchRequest:request inContext:context];
+    NSManagedObject* managedObj = [result lastObject];
+    
+    [self mergeWithManagedObject:managedObj];
+}
+
+- (void)mergeWithOtherEphemeralObject:(ACEphemeralObject *)ephemObj
+{
+    if (ephemObj) {
+        if (ephemObj.managedObject) {
+            [self mergeWithManagedObject:ephemObj.managedObject];
+        } else if (ephemObj.jsonDictionary) {
+            [self mergeWithJsonDictionary:ephemObj.jsonDictionary];
+        }
+    }
+}
+
++ (void)addJsonDictionary:(NSDictionary *)jsonDictionary toManagedObject:(NSManagedObject *)managedObject class:(Class)class
+{
+    unsigned count;
+    objc_property_t *properties = class_copyPropertyList(class, &count);
+    
+    for (NSUInteger i = 0; i < count; i++)
+    {
+        objc_property_t property = properties[i];
+        const char *propName = property_getName(property);
+        if(propName) {
+            NSString *name = [NSString stringWithCString:propName
+                                                encoding:[NSString defaultCStringEncoding]];
+            if (jsonDictionary[name]) {
+                if ([jsonDictionary[name] isKindOfClass:[ACEphemeralObject class]]) {
+                    Class subClass = [ACEphemeralObject getClassFromPropertyAttributes:property];
+                    NSManagedObject* subObj = [ACEphemeralObject convertInMemoryObjectToManaged:jsonDictionary[name] class:subClass];
+                    [managedObject setValue:subObj forKeyPath:name];
+                } else if ([jsonDictionary[name] isKindOfClass:[NSOrderedSet class]]) {
+                    const char *propAttribute = property_getAttributes(property);
+                    NSString *propAttributeString = [NSString stringWithUTF8String:propAttribute];
+                    NSArray *attrArray = [propAttributeString componentsSeparatedByString:@","];
+                    NSString *attribute=[attrArray firstObject];
+                    NSString *classNameWithProtocol = [[attribute stringByReplacingOccurrencesOfString:@"\"" withString:@""] stringByReplacingOccurrencesOfString:@"T@" withString:@""];
+                    NSArray *classesAndProtocols = [classNameWithProtocol componentsSeparatedByString:@"<"];
+                    NSString* protocolNameWithSymbols = [classesAndProtocols lastObject];
+                    NSString* protocolName = [protocolNameWithSymbols substringToIndex:[protocolNameWithSymbols length] - 1];
+                    const char *protocolNameCharString = [protocolName UTF8String];
+                    
+                    Class subClass = objc_getClass(protocolNameCharString);
+                    
+                    NSMutableOrderedSet *compoundOrederedSet = [managedObject valueForKey:name];
+                    if (subClass) {
+                        NSMutableOrderedSet * set = [NSMutableOrderedSet new];
+                        NSMutableArray *backRelationNames = nil;
+                        for (ACEphemeralObject *obj in jsonDictionary[name]) {
+                            NSManagedObject* subObj = [ACEphemeralObject convertInMemoryObjectToManaged:obj class:subClass];
+                            
+                            if (!backRelationNames) {
+                                backRelationNames = [NSMutableArray new];
+                                unsigned subCount;
+                                objc_property_t *subProperties = class_copyPropertyList(subClass, &subCount);
+                                
+                                for (NSUInteger j = 0; j < subCount; j++)
+                                {
+                                    objc_property_t subProperty = subProperties[j];
+                                    const char *subPropName = property_getName(subProperty);
+                                    if(subPropName) {
+                                        NSString *subName = [NSString stringWithCString:subPropName
+                                                                               encoding:[NSString defaultCStringEncoding]];
+                                        
+                                        const char *subPropAttribute = property_getAttributes(subProperty);
+                                        NSString *subPropAttributeString = [NSString stringWithUTF8String:subPropAttribute];
+                                        NSArray *subAttrArray = [subPropAttributeString componentsSeparatedByString:@","];
+                                        NSString *subAttribute=[subAttrArray firstObject];
+                                        NSString *className = [[subAttribute stringByReplacingOccurrencesOfString:@"\"" withString:@""] stringByReplacingOccurrencesOfString:@"T@" withString:@""];
+                                        const char *classNameCharString = [className UTF8String];
+                                        
+                                        Class managedSubClass = objc_getClass(classNameCharString);
+                                        
+                                        if ([managedSubClass isSubclassOfClass:class]) {
+                                            [backRelationNames addObject:subName];
+                                        }
+                                    }
+                                }
+                            }
+                            
+                            for (NSString *backRelationName in backRelationNames) {
+                                [subObj setValue:managedObject forKey:backRelationName];
+                            }
+                            
+                            [set addObject:subObj];
+                        }
+                        if (compoundOrederedSet) {
+                            [compoundOrederedSet unionOrderedSet:set];
+                        } else {
+                            compoundOrederedSet = set;
+                        }
+                        [managedObject setValue:compoundOrederedSet forKeyPath:name];
+                    } else {
+                        if (compoundOrederedSet) {
+                            [compoundOrederedSet unionOrderedSet:jsonDictionary[name]];
+                        } else {
+                            compoundOrederedSet = jsonDictionary[name];
+                        }
+                        [managedObject setValue:compoundOrederedSet forKeyPath:name];
+                    }
+                }  else {
+                    [managedObject setValue:jsonDictionary[name] forKeyPath:name];
+                }
+            }
+        }
+    }
+    free(properties);
+}
+
 
 #pragma mark - Object tracer
 
@@ -113,22 +319,24 @@ typedef enum _SelectorInferredImplType {
 }
 
 
-+ (id)ephemeralObjectWrappingObject:(id)originalObject {
++ (instancetype)ephemeralObjectWrappingObject:(id)originalObject {
     id result = originalObject;
     
     if ([originalObject isKindOfClass:[NSDictionary class]]) {
-        result = [ACEphemeralObject createInMemoryFromJsonDictionary:originalObject];
+        result = [[self.class alloc] initWithJsonDictionary:originalObject];
     }
     else if ([originalObject isKindOfClass:[NSArray class]]) {
         NSMutableOrderedSet* orderedSet = [NSMutableOrderedSet new];
         for (id obj in originalObject) {
             if ([obj isKindOfClass:[NSDictionary class]]) {
-                [orderedSet addObject:[ACEphemeralObject ephemeralObjectWrappingObject:obj]];
+                [orderedSet addObject:[self.class ephemeralObjectWrappingObject:obj]];
             } else {
                 [orderedSet addObject:obj];
             }
-            result = orderedSet;
         }
+        result = [orderedSet copy];
+    } else if ([originalObject isKindOfClass:[NSManagedObject class]]) {
+        result = [[self.class alloc] initWithManagedObject:originalObject];
     }
     
     return result;
@@ -149,32 +357,7 @@ typedef enum _SelectorInferredImplType {
 + (NSManagedObject*)convertInMemoryObjectToManaged:(ACEphemeralObject*)ephemObj class:(Class)class
 {
     NSManagedObject* obj = [[NSManagedObject alloc] initWithEntity:[NSEntityDescription entityForName:NSStringFromClass(class) inManagedObjectContext:[NSManagedObjectContext MR_contextForCurrentThread]] insertIntoManagedObjectContext:[NSManagedObjectContext MR_contextForCurrentThread]];
-    
-    unsigned count;
-    objc_property_t *properties = class_copyPropertyList(class, &count);
-    
-    for (NSUInteger i = 0; i < count; i++)
-    {
-        objc_property_t property = properties[i];
-        const char *propName = property_getName(property);
-        if(propName) {
-            NSString *name = [NSString stringWithCString:propName
-                                                encoding:[NSString defaultCStringEncoding]];
-            if (ephemObj.jsonDictionary[name]) {
-                if ([ephemObj.jsonDictionary[name] isKindOfClass:[ACEphemeralObject class]]) {
-                    Class subClass = [self getClassFromPropertyAttributes:property];
-                    NSManagedObject* subObj = [self convertInMemoryObjectToManaged:ephemObj.jsonDictionary[name] class:subClass];
-                    [obj setValue:subObj forKeyPath:name];
-                } else if ([ephemObj.jsonDictionary[name] isKindOfClass:[NSOrderedSet class]]) {
-                    
-                } else {
-                    [obj setValue:ephemObj.jsonDictionary[name] forKeyPath:name];
-                }
-            }
-        }
-    }
-    free(properties);
-    
+    [ACEphemeralObject addJsonDictionary:ephemObj.jsonDictionary toManagedObject:obj class:class];
     return obj;
 }
 

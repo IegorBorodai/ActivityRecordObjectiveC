@@ -87,7 +87,7 @@ static NCNetworkManager *sharedNetworkClient = nil;
                                       @"messages":@{@"limit":@"3"}
                                       };
     
-
+    
     
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:graphParameters
                                                        options:0
@@ -99,27 +99,27 @@ static NCNetworkManager *sharedNetworkClient = nil;
         if (success) {
             User* user = nil;
             user = [[User findAll] lastObject];
-//            if (!user) {
-                user = [[User alloc] initWithJsonDictionary:jsonResponse];
+            //            if (!user) {
+            user = [User ephemeralObjectWrappingObject:jsonResponse];
+            NSLog(@"%@", user.birthday);
+            user.birthday = @"Other date";
+            NSLog(@"%@", user.birthday);
+            NSLog(@"%@", user.geo.city);
+            NSLog(@"%@", ((Messages *)[user.messages firstObject]).msgType);
+            
+            [user saveWithCompletionBlock:^(BOOL success, NSError *error) {
+                User *another = (User *)user.managedObject;
+                another.birthday = @"New date another";
+                NSLog(@"%@", another.birthday);
+                NSLog(@"%@", ((Messages *)[another.messages firstObject]).msgType);
                 NSLog(@"%@", user.birthday);
-                user.birthday = @"Other date";
+                user.birthday = @"New date";
                 NSLog(@"%@", user.birthday);
                 NSLog(@"%@", user.geo.city);
                 NSLog(@"%@", ((Messages *)[user.messages firstObject]).msgType);
-            
-                [user saveWithCompletionBlock:^(BOOL success, NSError *error) {
-                    User *another = (User *)user.managedObject;
-                    another.birthday = @"New date another";
-                    NSLog(@"%@", another.birthday);
-                    NSLog(@"%@", ((Messages *)[another.messages firstObject]).msgType);
-                    NSLog(@"%@", user.birthday);
-                    user.birthday = @"New date";
-                    NSLog(@"%@", user.birthday);
-                    NSLog(@"%@", user.geo.city);
-                    NSLog(@"%@", ((Messages *)[user.messages firstObject]).msgType);
-
-                }];
-//            }
+                
+            }];
+            //            }
         }
     } failure:failure];
     

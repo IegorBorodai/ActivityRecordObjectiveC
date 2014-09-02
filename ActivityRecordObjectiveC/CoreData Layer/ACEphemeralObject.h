@@ -13,17 +13,21 @@
 @property (nonatomic, strong, readonly) NSMutableDictionary     *jsonDictionary;
 @property (nonatomic, strong, readonly) NSManagedObject         *managedObject;
 
-+ (instancetype)createInMemoryFromJsonDictionary:(NSDictionary *)jsonDictionary;
-+ (instancetype)create;
++ (instancetype)ephemeralObjectWrappingObject:(id)originalObject;
 
-+ (NSManagedObject*)convertInMemoryObjectToManaged:(ACEphemeralObject*)ephemObj class:(Class)class;
-
-- (instancetype)initWithJsonDictionary:(NSDictionary *)jsonDictionary;
-- (void)saveWithCompletionBlock:(void (^)(BOOL success, NSError *error))completion;
-- (void)saveAndWait;
-- (void)delete;
 - (void)convertToManagedObject;
 
+- (void)saveWithCompletionBlock:(void (^)(BOOL success, NSError *error))completion;
+- (void)saveAndWait;
+
+- (void)delete;
+
+- (void)mergeWithCoreDataByPredicate:(NSPredicate *)predicate;
+- (void)mergeWithOtherEphemeralObject:(ACEphemeralObject *)ephemObj;
+
++ (NSArray *)findAllWithPredicate:(NSPredicate *)predicate;
++ (NSArray *)findAllWithSortDescriptors:(NSArray *)sortDescriptors;
 + (NSArray *)findAll;
++ (NSArray *)findAllWithPredicate:(NSPredicate *)predicate sortDescriptors:(NSArray *)sortDescriptors;
 
 @end
